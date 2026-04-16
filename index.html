@@ -59,6 +59,12 @@
             font-size: 2rem;
         }
 
+        .nav-right {
+            display: flex;
+            align-items: center;
+            gap: 2rem;
+        }
+
         nav {
             display: flex;
             gap: 2rem;
@@ -83,6 +89,21 @@
             color: white;
             font-size: 1.5rem;
             cursor: pointer;
+        }
+
+        .language-toggle {
+            background: rgba(255, 255, 255, 0.2);
+            border: 1px solid white;
+            color: white;
+            padding: 0.5rem 1rem;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: all 0.3s;
+        }
+
+        .language-toggle:hover {
+            background: rgba(255, 255, 255, 0.3);
         }
 
         /* Hero Section */
@@ -465,6 +486,10 @@
                 display: block;
             }
 
+            .nav-right {
+                gap: 1rem;
+            }
+
             .hero h1 {
                 font-size: 2rem;
             }
@@ -501,80 +526,85 @@
         <div class="header-container">
             <div class="logo">
                 <span class="logo-icon">✈️</span>
-                <span>Addi & Tommy Airlines</span>
+                <span data-en="Addi & Tommy Airlines" data-it="Addi & Tommy Airlines">Addi & Tommy Airlines</span>
             </div>
-            <button class="menu-toggle" onclick="toggleMenu()">☰</button>
-            <nav id="nav-menu">
-                <a onclick="scrollToSection('search')">Book Flight</a>
-                <a onclick="scrollToSection('routes')">Routes</a>
-                <a onclick="scrollToSection('map')">Network</a>
-                <a onclick="scrollToSection('about')">About Us</a>
-                <a onclick="openContactModal()">Contact</a>
-            </nav>
+            <div class="nav-right">
+                <button class="menu-toggle" onclick="toggleMenu()">☰</button>
+                <button class="language-toggle" onclick="toggleLanguage()">
+                    <span id="lang-btn">IT</span>
+                </button>
+                <nav id="nav-menu">
+                    <a onclick="scrollToSection('search')" data-en="Book Flight" data-it="Prenota Volo">Book Flight</a>
+                    <a onclick="scrollToSection('routes')" data-en="Routes" data-it="Rotte">Routes</a>
+                    <a onclick="scrollToSection('map')" data-en="Network" data-it="Rete">Network</a>
+                    <a onclick="scrollToSection('about')" data-en="About Us" data-it="Chi Siamo">About Us</a>
+                    <a onclick="openContactModal()" data-en="Contact" data-it="Contatti">Contact</a>
+                </nav>
+            </div>
         </div>
     </header>
 
     <!-- Hero Section -->
     <section class="hero">
-        <h1>Fly with Us, Fly with Friends</h1>
-        <p>Experience premium travel with Addi & Tommy Airlines - where every journey is an adventure</p>
+        <h1 data-en="Fly with Us, Fly with Friends" data-it="Vola con Noi, Vola con Amici">Fly with Us, Fly with Friends</h1>
+        <p data-en="Experience premium travel with Addi & Tommy Airlines - where every journey is an adventure" data-it="Sperimenta viaggi premium con Addi & Tommy Airlines - dove ogni viaggio è un'avventura">Experience premium travel with Addi & Tommy Airlines - where every journey is an adventure</p>
         <div class="cta-buttons">
-            <button class="btn btn-primary" onclick="scrollToSection('search')">Book Now</button>
-            <button class="btn btn-secondary" onclick="openContactModal()">Learn More</button>
+            <button class="btn btn-primary" onclick="scrollToSection('search')" data-en="Book Now" data-it="Prenota Ora">Book Now</button>
+            <button class="btn btn-secondary" onclick="openContactModal()" data-en="Learn More" data-it="Scopri di Più">Learn More</button>
         </div>
     </section>
 
     <!-- Flight Search Section -->
     <section class="search-section" id="search">
         <div class="search-container">
-            <h2>✈️ Find Your Flight</h2>
+            <h2 data-en="✈️ Find Your Flight" data-it="✈️ Trova il Tuo Volo">✈️ Find Your Flight</h2>
             <div class="search-form">
                 <div class="form-group">
-                    <label>From</label>
+                    <label data-en="From" data-it="Da">From</label>
                     <select id="from-airport">
-                        <option value="">Select Departure</option>
-                        <option value="NYC">New York (NYC)</option>
-                        <option value="HBK">Hoboken (HBK)</option>
-                        <option value="MSO">Missoula (MSO)</option>
-                        <option value="MXP">Milan - Malpensa (MXP)</option>
+                        <option value="" data-en="Select Departure" data-it="Seleziona Partenza">Select Departure</option>
+                        <option value="NYC" data-en="New York (NYC)" data-it="New York (NYC)">New York (NYC)</option>
+                        <option value="HBK" data-en="Hoboken (HBK)" data-it="Hoboken (HBK)">Hoboken (HBK)</option>
+                        <option value="MSO" data-en="Missoula (MSO)" data-it="Missoula (MSO)">Missoula (MSO)</option>
+                        <option value="MXP" data-en="Milan - Malpensa (MXP)" data-it="Milano - Malpensa (MXP)">Milan - Malpensa (MXP)</option>
                     </select>
                 </div>
                 <div class="form-group">
-                    <label>To</label>
+                    <label data-en="To" data-it="A">To</label>
                     <select id="to-airport">
-                        <option value="">Select Destination</option>
-                        <option value="NYC">New York (NYC)</option>
-                        <option value="HBK">Hoboken (HBK)</option>
-                        <option value="MSO">Missoula (MSO)</option>
-                        <option value="MXP">Milan - Malpensa (MXP)</option>
+                        <option value="" data-en="Select Destination" data-it="Seleziona Destinazione">Select Destination</option>
+                        <option value="NYC" data-en="New York (NYC)" data-it="New York (NYC)">New York (NYC)</option>
+                        <option value="HBK" data-en="Hoboken (HBK)" data-it="Hoboken (HBK)">Hoboken (HBK)</option>
+                        <option value="MSO" data-en="Missoula (MSO)" data-it="Missoula (MSO)">Missoula (MSO)</option>
+                        <option value="MXP" data-en="Milan - Malpensa (MXP)" data-it="Milano - Malpensa (MXP)">Milan - Malpensa (MXP)</option>
                     </select>
                 </div>
                 <div class="form-group">
-                    <label>Departure Date</label>
+                    <label data-en="Departure Date" data-it="Data di Partenza">Departure Date</label>
                     <input type="date" id="departure-date">
                 </div>
                 <div class="form-group">
-                    <label>Return Date</label>
+                    <label data-en="Return Date" data-it="Data di Ritorno">Return Date</label>
                     <input type="date" id="return-date">
                 </div>
                 <div class="form-group">
-                    <label>Passengers</label>
+                    <label data-en="Passengers" data-it="Passeggeri">Passengers</label>
                     <select id="passengers">
-                        <option value="1">1 Passenger</option>
-                        <option value="2">2 Passengers</option>
-                        <option value="3">3 Passengers</option>
-                        <option value="4">4 Passengers</option>
-                        <option value="5">5+ Passengers</option>
+                        <option value="1" data-en="1 Passenger" data-it="1 Passeggero">1 Passenger</option>
+                        <option value="2" data-en="2 Passengers" data-it="2 Passeggeri">2 Passengers</option>
+                        <option value="3" data-en="3 Passengers" data-it="3 Passeggeri">3 Passengers</option>
+                        <option value="4" data-en="4 Passengers" data-it="4 Passeggeri">4 Passengers</option>
+                        <option value="5" data-en="5+ Passengers" data-it="5+ Passeggeri">5+ Passengers</option>
                     </select>
                 </div>
-                <button class="search-btn" onclick="searchFlights()">Search Flights</button>
+                <button class="search-btn" onclick="searchFlights()" data-en="Search Flights" data-it="Cerca Voli">Search Flights</button>
             </div>
         </div>
     </section>
 
     <!-- Routes Section -->
     <section class="routes-section" id="routes">
-        <h2 class="section-title">🌍 Our Routes</h2>
+        <h2 class="section-title" data-en="🌍 Our Routes" data-it="🌍 Le Nostre Rotte">🌍 Our Routes</h2>
         <div class="routes-grid" id="routes-grid">
             <!-- Routes will be populated by JavaScript -->
         </div>
@@ -583,7 +613,7 @@
     <!-- Map Section -->
     <section class="map-section" id="map">
         <div class="map-container">
-            <h2 class="section-title">🗺️ Our Network</h2>
+            <h2 class="section-title" data-en="🗺️ Our Network" data-it="🗺️ La Nostra Rete">🗺️ Our Network</h2>
             <div id="airline-map"></div>
         </div>
     </section>
@@ -592,34 +622,34 @@
     <section class="about-section" id="about">
         <div class="about-content">
             <div class="about-text">
-                <h2>About Addi & Tommy Airlines</h2>
-                <p>Founded by Addison Boyer and Tommy, we're a modern airline dedicated to connecting people across the United States and Europe with comfort, reliability, and a personal touch.</p>
-                <p>Our fleet is carefully curated to provide the best experience whether you're traveling for business or leisure. We believe in making air travel accessible, affordable, and enjoyable.</p>
-                <p>With a focus on customer satisfaction and innovative service, Addi & Tommy Airlines is your trusted partner for every journey.</p>
+                <h2 data-en="About Addi & Tommy Airlines" data-it="Su Addi & Tommy Airlines">About Addi & Tommy Airlines</h2>
+                <p data-en="Founded by Addison Boyer and Tommy, we're a modern airline dedicated to connecting people across the United States and Europe with comfort, reliability, and a personal touch." data-it="Fondata da Addison Boyer e Tommy, siamo una compagnia aerea moderna dedicata a connettere le persone negli Stati Uniti e in Europa con comfort, affidabilità e un tocco personale.">Founded by Addison Boyer and Tommy, we're a modern airline dedicated to connecting people across the United States and Europe with comfort, reliability, and a personal touch.</p>
+                <p data-en="Our fleet is carefully curated to provide the best experience whether you're traveling for business or leisure. We believe in making air travel accessible, affordable, and enjoyable." data-it="La nostra flotta è accuratamente selezionata per fornire la migliore esperienza sia che tu stia viaggiando per affari o piacere. Crediamo nel rendere i viaggi aerei accessibili, convenienti e piacevoli.">Our fleet is carefully curated to provide the best experience whether you're traveling for business or leisure. We believe in making air travel accessible, affordable, and enjoyable.</p>
+                <p data-en="With a focus on customer satisfaction and innovative service, Addi & Tommy Airlines is your trusted partner for every journey." data-it="Con un focus sulla soddisfazione del cliente e servizi innovativi, Addi & Tommy Airlines è il tuo partner affidabile per ogni viaggio.">With a focus on customer satisfaction and innovative service, Addi & Tommy Airlines is your trusted partner for every journey.</p>
                 <div class="about-stats">
                     <div class="stat">
                         <div class="stat-number">4</div>
-                        <div class="stat-label">Hub Cities</div>
+                        <div class="stat-label" data-en="Hub Cities" data-it="Città Hub">Hub Cities</div>
                     </div>
                     <div class="stat">
                         <div class="stat-number">6</div>
-                        <div class="stat-label">Active Routes</div>
+                        <div class="stat-label" data-en="Active Routes" data-it="Rotte Attive">Active Routes</div>
                     </div>
                     <div class="stat">
                         <div class="stat-number">100%</div>
-                        <div class="stat-label">Satisfaction</div>
+                        <div class="stat-label" data-en="Satisfaction" data-it="Soddisfazione">Satisfaction</div>
                     </div>
                     <div class="stat">
                         <div class="stat-number">24/7</div>
-                        <div class="stat-label">Support</div>
+                        <div class="stat-label" data-en="Support" data-it="Supporto">Support</div>
                     </div>
                 </div>
             </div>
             <div style="background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%); border-radius: 10px; padding: 2rem; color: white; text-align: center;">
                 <div style="font-size: 4rem; margin-bottom: 1rem;">✈️</div>
-                <h3>Ready to Fly?</h3>
-                <p style="margin-top: 1rem;">Join thousands of satisfied passengers who trust Addi & Tommy Airlines</p>
-                <button class="btn btn-primary" style="margin-top: 1rem;" onclick="scrollToSection('search')">Book Your Flight</button>
+                <h3 data-en="Ready to Fly?" data-it="Pronto a Volare?">Ready to Fly?</h3>
+                <p style="margin-top: 1rem;" data-en="Join thousands of satisfied passengers who trust Addi & Tommy Airlines" data-it="Unisciti a migliaia di passeggeri soddisfatti che si fidano di Addi & Tommy Airlines">Join thousands of satisfied passengers who trust Addi & Tommy Airlines</p>
+                <button class="btn btn-primary" style="margin-top: 1rem;" onclick="scrollToSection('search')" data-en="Book Your Flight" data-it="Prenota il Tuo Volo">Book Your Flight</button>
             </div>
         </div>
     </section>
@@ -628,21 +658,21 @@
     <footer>
         <div class="footer-content">
             <div class="footer-section">
-                <h3>Quick Links</h3>
-                <a href="#search">Book Flight</a>
-                <a href="#routes">Routes</a>
-                <a href="#map">Network</a>
-                <a href="#about">About</a>
+                <h3 data-en="Quick Links" data-it="Link Veloci">Quick Links</h3>
+                <a href="#search" data-en="Book Flight" data-it="Prenota Volo">Book Flight</a>
+                <a href="#routes" data-en="Routes" data-it="Rotte">Routes</a>
+                <a href="#map" data-en="Network" data-it="Rete">Network</a>
+                <a href="#about" data-en="About" data-it="Chi Siamo">About</a>
             </div>
             <div class="footer-section">
-                <h3>Support</h3>
-                <a href="#" onclick="openContactModal()">Contact Us</a>
-                <a href="#">FAQs</a>
-                <a href="#">Baggage Info</a>
-                <a href="#">Loyalty Program</a>
+                <h3 data-en="Support" data-it="Supporto">Support</h3>
+                <a href="#" onclick="openContactModal()" data-en="Contact Us" data-it="Contattaci">Contact Us</a>
+                <a href="#" data-en="FAQs" data-it="Domande Frequenti">FAQs</a>
+                <a href="#" data-en="Baggage Info" data-it="Info Bagaglio">Baggage Info</a>
+                <a href="#" data-en="Loyalty Program" data-it="Programma Fedeltà">Loyalty Program</a>
             </div>
             <div class="footer-section">
-                <h3>Follow Us</h3>
+                <h3 data-en="Follow Us" data-it="Seguici">Follow Us</h3>
                 <a href="#">Facebook</a>
                 <a href="#">Twitter</a>
                 <a href="#">Instagram</a>
@@ -650,7 +680,7 @@
             </div>
         </div>
         <div class="footer-bottom">
-            <p>&copy; 2024 Addi & Tommy Airlines. All rights reserved. ✈️</p>
+            <p data-en="© 2024 Addi & Tommy Airlines. All rights reserved. ✈️" data-it="© 2024 Addi & Tommy Airlines. Tutti i diritti riservati. ✈️">© 2024 Addi & Tommy Airlines. All rights reserved. ✈️</p>
         </div>
     </footer>
 
@@ -658,21 +688,21 @@
     <div id="contactModal" class="modal">
         <div class="modal-content">
             <span class="close" onclick="closeContactModal()">&times;</span>
-            <h2>Contact Us</h2>
+            <h2 data-en="Contact Us" data-it="Contattaci">Contact Us</h2>
             <form onsubmit="handleContactSubmit(event)">
                 <div class="form-group">
-                    <label>Name</label>
+                    <label data-en="Name" data-it="Nome">Name</label>
                     <input type="text" required>
                 </div>
                 <div class="form-group">
-                    <label>Email</label>
+                    <label data-en="Email" data-it="Email">Email</label>
                     <input type="email" required>
                 </div>
                 <div class="form-group">
-                    <label>Message</label>
+                    <label data-en="Message" data-it="Messaggio">Message</label>
                     <textarea required style="padding: 0.75rem; border: 2px solid #ddd; border-radius: 5px; font-size: 1rem; min-height: 150px;"></textarea>
                 </div>
-                <button type="submit" class="btn btn-primary" style="width: 100%; margin-top: 1rem;">Send Message</button>
+                <button type="submit" class="btn btn-primary" style="width: 100%; margin-top: 1rem;" data-en="Send Message" data-it="Invia Messaggio">Send Message</button>
             </form>
         </div>
     </div>
@@ -682,59 +712,62 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/leaflet@1.9.3/dist/leaflet.css"/>
 
     <script>
+        // Language state
+        let currentLanguage = 'en';
+
         // Routes Data
         const routes = [
             {
-                from: 'New York',
-                to: 'Hoboken',
+                from: { en: 'New York', it: 'New York' },
+                to: { en: 'Hoboken', it: 'Hoboken' },
                 price: 89,
                 duration: '45 min',
-                frequency: 'Daily',
+                frequency: { en: 'Daily', it: 'Giornaliero' },
                 fromCode: 'NYC',
                 toCode: 'HBK'
             },
             {
-                from: 'New York',
-                to: 'Missoula',
+                from: { en: 'New York', it: 'New York' },
+                to: { en: 'Missoula', it: 'Missoula' },
                 price: 249,
                 duration: '4h 30m',
-                frequency: 'Daily',
+                frequency: { en: 'Daily', it: 'Giornaliero' },
                 fromCode: 'NYC',
                 toCode: 'MSO'
             },
             {
-                from: 'Missoula',
-                to: 'New York',
+                from: { en: 'Missoula', it: 'Missoula' },
+                to: { en: 'New York', it: 'New York' },
                 price: 249,
                 duration: '4h 30m',
-                frequency: 'Daily',
+                frequency: { en: 'Daily', it: 'Giornaliero' },
                 fromCode: 'MSO',
                 toCode: 'NYC'
             },
             {
-                from: 'Milan',
-                to: 'Hoboken',
+                from: { en: 'Milan', it: 'Milano' },
+                to: { en: 'Hoboken', it: 'Hoboken' },
                 price: 599,
                 duration: '9h 15m',
-                frequency: '3x Weekly',
+                frequency: { en: '3x Weekly', it: '3 volte a settimana' },
                 fromCode: 'MXP',
                 toCode: 'HBK'
             },
             {
-                from: 'New York',
-                to: 'Milan',
+                from: { en: 'New York', it: 'New York' },
+                to: { en: 'Milan', it: 'Milano' },
                 price: 599,
                 duration: '9h 15m',
-                frequency: '3x Weekly',
+                frequency: { en: '3x Weekly', it: '3 volte a settimana' },
                 fromCode: 'NYC',
                 toCode: 'MXP'
             },
             {
-                from: 'Hoboken',
-                to: 'Missoula',
+                from: { en: 'Hoboken', it: 'Hoboken' },
+                to: { en: 'Missoula', it: 'Missoula' },
                 price: 199,
                 duration: '5h',
-                frequency: 'Daily',
+                frequency: { en: 'Daily', it: 'Giornaliero' },
                 fromCode: 'HBK',
                 toCode: 'MSO'
             }
@@ -742,11 +775,35 @@
 
         // Airport Coordinates
         const airports = {
-            'NYC': { lat: 40.7128, lng: -74.0060, name: 'New York' },
-            'HBK': { lat: 40.7430, lng: -74.0324, name: 'Hoboken' },
-            'MSO': { lat: 46.8722, lng: -113.9940, name: 'Missoula' },
-            'MXP': { lat: 45.6295, lng: 8.7281, name: 'Milan' }
+            'NYC': { lat: 40.7128, lng: -74.0060, name: { en: 'New York', it: 'New York' } },
+            'HBK': { lat: 40.7430, lng: -74.0324, name: { en: 'Hoboken', it: 'Hoboken' } },
+            'MSO': { lat: 46.8722, lng: -113.9940, name: { en: 'Missoula', it: 'Missoula' } },
+            'MXP': { lat: 45.6295, lng: 8.7281, name: { en: 'Milan', it: 'Milano' } }
         };
+
+        // Language Toggle
+        function toggleLanguage() {
+            currentLanguage = currentLanguage === 'en' ? 'it' : 'en';
+            document.getElementById('lang-btn').textContent = currentLanguage === 'en' ? 'IT' : 'EN';
+            updateLanguage();
+        }
+
+        function updateLanguage() {
+            // Update all elements with data-en and data-it attributes
+            document.querySelectorAll('[data-en][data-it]').forEach(element => {
+                const text = element.getAttribute(`data-${currentLanguage}`);
+                if (text) {
+                    if (element.tagName === 'OPTION' || element.tagName === 'INPUT' || element.tagName === 'TEXTAREA') {
+                        element.textContent = text;
+                    } else {
+                        element.textContent = text;
+                    }
+                }
+            });
+
+            // Update routes
+            populateRoutes();
+        }
 
         // Initialize map
         function initMap() {
@@ -758,6 +815,7 @@
 
             // Add airport markers
             Object.entries(airports).forEach(([code, airport]) => {
+                const name = airport.name[currentLanguage];
                 L.circleMarker([airport.lat, airport.lng], {
                     radius: 8,
                     fillColor: '#0066cc',
@@ -765,7 +823,7 @@
                     weight: 2,
                     opacity: 1,
                     fillOpacity: 0.8
-                }).bindPopup(`<strong>${airport.name}</strong><br>Code: ${code}`).addTo(map);
+                }).bindPopup(`<strong>${name}</strong><br>Code: ${code}`).addTo(map);
             });
 
             // Add route lines
@@ -782,21 +840,26 @@
         // Populate routes grid
         function populateRoutes() {
             const routesGrid = document.getElementById('routes-grid');
-            routesGrid.innerHTML = routes.map(route => `
-                <div class="route-card">
-                    <div class="route-header">
-                        <div class="route-title">${route.from} → ${route.to}</div>
-                    </div>
-                    <div class="route-body">
-                        <div class="route-info">
-                            <span>⏱️ ${route.duration}</span>
-                            <span>📅 ${route.frequency}</span>
+            routesGrid.innerHTML = routes.map(route => {
+                const selectText = currentLanguage === 'en' ? 'Select Route' : 'Seleziona Rotta';
+                const timeText = currentLanguage === 'en' ? '⏱️' : '⏱️';
+                const freqText = currentLanguage === 'en' ? '📅' : '📅';
+                return `
+                    <div class="route-card">
+                        <div class="route-header">
+                            <div class="route-title">${route.from[currentLanguage]} → ${route.to[currentLanguage]}</div>
                         </div>
-                        <div class="route-price">$${route.price}</div>
-                        <button class="route-btn" onclick="selectRoute('${route.fromCode}', '${route.toCode}')">Select Route</button>
+                        <div class="route-body">
+                            <div class="route-info">
+                                <span>${timeText} ${route.duration}</span>
+                                <span>${freqText} ${route.frequency[currentLanguage]}</span>
+                            </div>
+                            <div class="route-price">$${route.price}</div>
+                            <button class="route-btn" onclick="selectRoute('${route.fromCode}', '${route.toCode}')">${selectText}</button>
+                        </div>
                     </div>
-                </div>
-            `).join('');
+                `;
+            }).join('');
         }
 
         // Navigation
@@ -819,16 +882,21 @@
             const passengers = document.getElementById('passengers').value;
 
             if (!from || !to || !departure) {
-                alert('Please fill in all required fields');
+                const msg = currentLanguage === 'en' ? 'Please fill in all required fields' : 'Per favore riempi tutti i campi obbligatori';
+                alert(msg);
                 return;
             }
 
             if (from === to) {
-                alert('Departure and destination cannot be the same');
+                const msg = currentLanguage === 'en' ? 'Departure and destination cannot be the same' : 'La partenza e la destinazione non possono essere uguali';
+                alert(msg);
                 return;
             }
 
-            alert(`Searching flights from ${from} to ${to} on ${departure} for ${passengers} passenger(s)...`);
+            const searchMsg = currentLanguage === 'en' 
+                ? `Searching flights from ${from} to ${to} on ${departure} for ${passengers} passenger(s)...`
+                : `Ricerca voli da ${from} a ${to} il ${departure} per ${passengers} passeggero(i)...`;
+            alert(searchMsg);
         }
 
         function selectRoute(from, to) {
@@ -848,7 +916,10 @@
 
         function handleContactSubmit(event) {
             event.preventDefault();
-            alert('Thank you for contacting us! We will get back to you soon.');
+            const msg = currentLanguage === 'en' 
+                ? 'Thank you for contacting us! We will get back to you soon.'
+                : 'Grazie per averci contattato! Ti contatteremo presto.';
+            alert(msg);
             closeContactModal();
         }
 
