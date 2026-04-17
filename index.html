@@ -2025,7 +2025,7 @@
                 <a href="#search" data-en="Book Flight" data-it="Prenota Volo">Book Flight</a>
                 <a href="#routes" data-en="Routes" data-it="Rotte">Routes</a>
                 <a href="#map" data-en="Network" data-it="Rete">Network</a>
-                <a href="#about" data-en="About" data-it="Chi Siamo">About</a>
+                <a href="#about" data-en="About Us" data-it="Chi Siamo">About Us</a>
             </div>
             <div class="footer-section">
                 <h3 data-en="Support" data-it="Supporto">Support</h3>
@@ -2557,13 +2557,13 @@
             'MXP': { 
                 lat: 45.6295, 
                 lng: 8.7281, 
-                name: { en: 'Milan - Malpensa', it: 'Milano - Malpensa' },
+                name: { en: 'Milan - Malpensa (MXP)', it: 'Milano - Malpensa (MXP)' },
                 country: { en: 'Italy', it: 'Italia' }
             },
             'MSO': { 
                 lat: 46.8722, 
                 lng: -113.9940, 
-                name: { en: 'Missoula', it: 'Missoula' },
+                name: { en: 'Missoula (MSO)', it: 'Missoula (MSO)' },
                 country: { en: 'United States', it: 'Stati Uniti' }
             }
         };
@@ -3285,7 +3285,7 @@
             console.log('  ETH Price (before gas):', ethPrice);
             console.log('  Gas Fee:', GAS_FEE);
             console.log('  Total with Gas (ETH):', totalWithGas);
-            console.log('  Type of totalWithGas:', typeof totalWithGas);
+            console.log('  Type of ethPrice:', typeof ethPrice);
 
             // Validate the amount is reasonable (< 10 ETH)
             if (parseFloat(totalWithGas) > 10) {
@@ -3301,13 +3301,14 @@
                 showPaymentLoader();
         
                 console.log('Sending transaction...');
-                const txHash = await sendPaymentTransaction(RECIPIENT_ADDRESS, totalWithGas);
+                // Send only the ETH ticket price, not including gas
+                const txHash = await sendPaymentTransaction(RECIPIENT_ADDRESS, ethPrice);
         
                 console.log('Transaction confirmed:', txHash);
         
                 const successMsg = currentLanguage === 'en'
-                    ? 'Booking confirmed! Flight: ' + currentRoute.from.en + ' → ' + currentRoute.to.en + ' | Passengers: ' + currentPassengers + ' | Amount: ' + totalWithGas + ' ETH | TX: ' + txHash
-                    : 'Prenotazione confermata! Volo: ' + currentRoute.from.it + ' → ' + currentRoute.to.it + ' | Passeggeri: ' + currentPassengers + ' | Importo: ' + totalWithGas + ' ETH | TX: ' + txHash;
+                    ? 'Booking confirmed! Flight: ' + currentRoute.from.en + ' → ' + currentRoute.to.en + ' | Passengers: ' + currentPassengers + ' | Amount: ' + ethPrice + ' ETH | TX: ' + txHash
+                    : 'Prenotazione confermata! Volo: ' + currentRoute.from.it + ' → ' + currentRoute.to.it + ' | Passeggeri: ' + currentPassengers + ' | Importo: ' + ethPrice + ' ETH | TX: ' + txHash;
         
                 hidePaymentLoader();
                 showNotification(successMsg, 'success', currentLanguage === 'en' ? 'Booking Confirmed' : 'Prenotazione Confermata');
