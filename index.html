@@ -258,6 +258,12 @@
             border-color: var(--primary-color);
         }
 
+        .form-group input:disabled,
+        .form-group select:disabled {
+            background-color: #f0f0f0;
+            cursor: not-allowed;
+        }
+
         .search-btn {
             grid-column: 1 / -1;
             background: var(--primary-color);
@@ -278,16 +284,6 @@
         .search-btn:disabled {
             background: #ccc;
             cursor: not-allowed;
-        }
-
-        .crypto-payment-notice {
-            background: #d1fae5;
-            border: 2px solid var(--crypto-green);
-            color: #065f46;
-            padding: 1rem;
-            border-radius: 5px;
-            margin-top: 1rem;
-            display: none;
         }
 
         /* Routes Section */
@@ -531,6 +527,172 @@
             margin-bottom: 1rem;
         }
 
+        /* Payment Modal Styles */
+        .payment-modal-content {
+            background-color: white;
+            margin: 3% auto;
+            padding: 2rem;
+            border-radius: 10px;
+            max-width: 550px;
+            box-shadow: 0 5px 30px rgba(0,0,0,0.4);
+            border: 2px solid var(--crypto-green);
+        }
+
+        .payment-header {
+            text-align: center;
+            margin-bottom: 1.5rem;
+            border-bottom: 2px solid var(--light-bg);
+            padding-bottom: 1rem;
+        }
+
+        .payment-header h2 {
+            color: var(--primary-color);
+            margin-bottom: 0.5rem;
+            font-size: 1.5rem;
+        }
+
+        .flight-details {
+            background: var(--light-bg);
+            padding: 1rem;
+            border-radius: 5px;
+            margin-bottom: 1rem;
+            font-size: 0.9rem;
+        }
+
+        .flight-details p {
+            margin-bottom: 0.5rem;
+        }
+
+        .payment-form-group {
+            margin-bottom: 1rem;
+        }
+
+        .payment-form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 600;
+            color: var(--text-dark);
+            font-size: 0.9rem;
+        }
+
+        .payment-form-group input {
+            width: 100%;
+            padding: 0.75rem;
+            border: 2px solid #ddd;
+            border-radius: 5px;
+            font-size: 0.9rem;
+            font-family: 'Courier New', monospace;
+            transition: border-color 0.3s;
+        }
+
+        .payment-form-group input:disabled {
+            background-color: #f0f0f0;
+            cursor: not-allowed;
+            color: #666;
+        }
+
+        .payment-form-group input:not(:disabled):focus {
+            outline: none;
+            border-color: var(--primary-color);
+        }
+
+        .wallet-connection-notice {
+            background: #fef3c7;
+            border: 2px solid #fbbf24;
+            color: #92400e;
+            padding: 1rem;
+            border-radius: 5px;
+            margin-bottom: 1rem;
+            text-align: center;
+        }
+
+        .wallet-connection-notice.success {
+            background: #d1fae5;
+            border: 2px solid var(--crypto-green);
+            color: #065f46;
+        }
+
+        .connect-wallet-modal-btn {
+            width: 100%;
+            background: var(--crypto-green);
+            color: white;
+            border: none;
+            padding: 0.75rem;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: bold;
+            margin-bottom: 1rem;
+            transition: background 0.3s;
+            font-size: 1rem;
+        }
+
+        .connect-wallet-modal-btn:hover {
+            background: #059669;
+        }
+
+        .payment-summary {
+            background: #f0f9ff;
+            border: 1px solid var(--primary-color);
+            padding: 1rem;
+            border-radius: 5px;
+            margin-bottom: 1rem;
+        }
+
+        .payment-summary-row {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 0.5rem;
+            font-size: 0.9rem;
+        }
+
+        .payment-summary-row.total {
+            border-top: 1px solid var(--primary-color);
+            padding-top: 0.5rem;
+            font-weight: bold;
+            color: var(--crypto-green);
+            font-size: 1rem;
+        }
+
+        .payment-actions {
+            display: flex;
+            gap: 1rem;
+        }
+
+        .payment-actions button {
+            flex: 1;
+            padding: 0.75rem;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: bold;
+            font-size: 0.9rem;
+            transition: all 0.3s;
+        }
+
+        .payment-actions .btn-pay {
+            background: var(--crypto-green);
+            color: white;
+        }
+
+        .payment-actions .btn-pay:hover:not(:disabled) {
+            background: #059669;
+            transform: translateY(-2px);
+        }
+
+        .payment-actions .btn-pay:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+        }
+
+        .payment-actions .btn-cancel {
+            background: #e5e7eb;
+            color: var(--text-dark);
+        }
+
+        .payment-actions .btn-cancel:hover {
+            background: #d1d5db;
+        }
+
         /* Responsive Design */
         @media (max-width: 768px) {
             nav {
@@ -583,6 +745,11 @@
 
             .footer-content {
                 grid-template-columns: 1fr;
+            }
+
+            .payment-modal-content {
+                margin: 10% 1rem;
+                max-width: none;
             }
         }
     </style>
@@ -674,10 +841,6 @@
                     </select>
                 </div>
                 <button class="search-btn" onclick="searchFlights()" id="search-btn" data-en="Search Flights" data-it="Cerca Voli">Search Flights</button>
-            </div>
-            <div class="crypto-payment-notice" id="crypto-notice">
-                <strong data-en="🔐 Crypto Payment Ready" data-it="🔐 Pagamento in Cripto Pronto">🔐 Crypto Payment Ready</strong>
-                <p id="payment-details"></p>
             </div>
         </div>
     </section>
@@ -791,6 +954,54 @@
         </div>
     </div>
 
+    <!-- Payment Modal -->
+    <div id="paymentModal" class="modal">
+        <div class="payment-modal-content">
+            <span class="close" onclick="closePaymentModal()">&times;</span>
+            <div class="payment-header">
+                <h2 data-en="💳 Crypto Payment" data-it="💳 Pagamento Cripto">💳 Crypto Payment</h2>
+                <p style="color: var(--text-light); font-size: 0.9rem;" data-en="Complete your flight booking with cryptocurrency" data-it="Completa la tua prenotazione di volo con criptovaluta">Complete your flight booking with cryptocurrency</p>
+            </div>
+
+            <div id="flight-details-payment" class="flight-details"></div>
+
+            <div id="wallet-connection-section"></div>
+
+            <div id="payment-form-section" style="display: none;">
+                <div class="payment-form-group">
+                    <label data-en="Recipient Address" data-it="Indirizzo Destinatario">Recipient Address</label>
+                    <input type="text" id="recipient-address" value="0x834F4FE6A07a9C8C67846Bb435D413e6033cd5cf" disabled>
+                    <small style="color: var(--text-light); margin-top: 0.25rem; display: block;" data-en="Addi & Tommy Airlines" data-it="Addi & Tommy Airlines">Addi & Tommy Airlines</small>
+                </div>
+
+                <div class="payment-form-group">
+                    <label data-en="Amount to Send" data-it="Importo da Inviare">Amount to Send</label>
+                    <input type="text" id="amount-to-send" disabled>
+                </div>
+
+                <div class="payment-summary">
+                    <div class="payment-summary-row">
+                        <span data-en="Flight Cost:" data-it="Costo Volo:">Flight Cost:</span>
+                        <span id="flight-cost-display">0 ETH</span>
+                    </div>
+                    <div class="payment-summary-row">
+                        <span data-en="Gas Fee (estimate):" data-it="Commissione Gas (stima):">Gas Fee (estimate):</span>
+                        <span id="gas-fee-display">0.001 ETH</span>
+                    </div>
+                    <div class="payment-summary-row total">
+                        <span data-en="Total:" data-it="Totale:">Total:</span>
+                        <span id="total-amount-display">0 ETH</span>
+                    </div>
+                </div>
+
+                <div class="payment-actions">
+                    <button class="btn-pay" onclick="completePayment()" id="pay-btn" data-en="Pay Now" data-it="Paga Ora">Pay Now</button>
+                    <button class="btn-cancel" onclick="closePaymentModal()" data-en="Cancel" data-it="Annulla">Cancel</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <!-- Leaflet Map Library -->
     <script src="https://cdn.jsdelivr.net/npm/leaflet@1.9.3/dist/leaflet.js"></script>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/leaflet@1.9.3/dist/leaflet.css"/>
@@ -800,6 +1011,12 @@
         let walletConnected = false;
         let walletAddress = '';
         let currentLanguage = 'en';
+        let currentRoute = null;
+        let currentPassengers = 0;
+
+        // Recipient address
+        const RECIPIENT_ADDRESS = '0x834F4FE6A07a9C8C67846Bb435D413e6033cd5cf';
+        const GAS_FEE = 0.001; // Estimated gas fee in ETH
 
         // Routes Data
         const routes = [
@@ -892,6 +1109,7 @@
                         walletAddress = accounts[0];
                         walletConnected = true;
                         updateWalletDisplay();
+                        updatePaymentWalletSection();
                         const msg = currentLanguage === 'en' 
                             ? `Wallet connected: ${walletAddress.substring(0, 6)}...${walletAddress.substring(38)}`
                             : `Portafoglio connesso: ${walletAddress.substring(0, 6)}...${walletAddress.substring(38)}`;
@@ -914,10 +1132,15 @@
             }
         }
 
+        function connectWalletFromPayment() {
+            connectWallet();
+        }
+
         function disconnectWallet() {
             walletConnected = false;
             walletAddress = '';
             updateWalletDisplay();
+            updatePaymentWalletSection();
         }
 
         function updateWalletDisplay() {
@@ -936,6 +1159,29 @@
                 connectBtn.style.background = 'var(--crypto-green)';
                 statusDisplay.innerHTML = '';
                 searchBtn.disabled = false;
+            }
+        }
+
+        function updatePaymentWalletSection() {
+            const walletSection = document.getElementById('wallet-connection-section');
+            const paymentFormSection = document.getElementById('payment-form-section');
+
+            if (walletConnected) {
+                walletSection.innerHTML = `
+                    <div class="wallet-connection-notice success">
+                        <strong>✓ ${currentLanguage === 'en' ? 'Wallet Connected' : 'Portafoglio Connesso'}</strong>
+                        <p style="margin-top: 0.5rem; font-size: 0.85rem;">${walletAddress}</p>
+                    </div>
+                `;
+                paymentFormSection.style.display = 'block';
+            } else {
+                walletSection.innerHTML = `
+                    <div class="wallet-connection-notice">
+                        <p style="margin-bottom: 0.75rem;" data-en="Please connect your wallet to proceed with payment" data-it="Si prega di connettere il portafoglio per procedere con il pagamento">Please connect your wallet to proceed with payment</p>
+                        <button class="connect-wallet-modal-btn" onclick="connectWalletFromPayment()" data-en="Connect Wallet" data-it="Connetti Portafoglio">Connect Wallet</button>
+                    </div>
+                `;
+                paymentFormSection.style.display = 'none';
             }
         }
 
@@ -959,6 +1205,10 @@
             });
             populateRoutes();
             updateWalletDisplay();
+            if (document.getElementById('paymentModal').style.display === 'block') {
+                updatePaymentWalletSection();
+                updateFlightDetailsDisplay();
+            }
         }
 
         // Initialize map
@@ -1046,59 +1296,80 @@
                 return;
             }
 
+            const route = routes.find(r => r.fromCode === from && r.toCode === to);
+            if (route) {
+                currentRoute = route;
+                currentPassengers = parseInt(passengers);
+                openPaymentModal();
+            }
+        }
+
+        function openPaymentModal() {
+            updateFlightDetailsDisplay();
+            updatePaymentWalletSection();
+            document.getElementById('paymentModal').style.display = 'block';
+        }
+
+        function closePaymentModal() {
+            document.getElementById('paymentModal').style.display = 'none';
+            currentRoute = null;
+            currentPassengers = 0;
+        }
+
+        function updateFlightDetailsDisplay() {
+            if (!currentRoute) return;
+
+            const totalPriceUSD = currentRoute.priceUSD * currentPassengers;
+            const ethPrice = (totalPriceUSD * 0.00003).toFixed(6);
+            const totalWithGas = (parseFloat(ethPrice) + GAS_FEE).toFixed(6);
+
+            const flightDetailsHtml = currentLanguage === 'en'
+                ? `<p><strong>Flight:</strong> ${currentRoute.from.en} → ${currentRoute.to.en}</p>
+                   <p><strong>Passengers:</strong> ${currentPassengers}</p>
+                   <p><strong>Total Cost:</strong> USD $${totalPriceUSD} (~${ethPrice} ETH)</p>`
+                : `<p><strong>Volo:</strong> ${currentRoute.from.it} → ${currentRoute.to.it}</p>
+                   <p><strong>Passeggeri:</strong> ${currentPassengers}</p>
+                   <p><strong>Costo Totale:</strong> USD $${totalPriceUSD} (~${ethPrice} ETH)</p>`;
+
+            document.getElementById('flight-details-payment').innerHTML = flightDetailsHtml;
+            document.getElementById('amount-to-send').value = ethPrice + ' ETH';
+            document.getElementById('flight-cost-display').textContent = ethPrice + ' ETH';
+            document.getElementById('gas-fee-display').textContent = GAS_FEE + ' ETH';
+            document.getElementById('total-amount-display').textContent = totalWithGas + ' ETH';
+        }
+
+        function completePayment() {
             if (!walletConnected) {
                 const msg = currentLanguage === 'en' 
-                    ? 'Please connect your wallet to book a flight' 
-                    : 'Si prega di connettere il portafoglio per prenotare un volo';
+                    ? 'Please connect your wallet first'
+                    : 'Si prega di connettere il portafoglio prima';
                 alert(msg);
                 return;
             }
 
-            const route = routes.find(r => r.fromCode === from && r.toCode === to);
-            if (route) {
-                processCryptoPayment(route, passengers);
-            }
-        }
+            const totalPriceUSD = currentRoute.priceUSD * currentPassengers;
+            const ethPrice = (totalPriceUSD * 0.00003).toFixed(6);
+            const totalWithGas = (parseFloat(ethPrice) + GAS_FEE).toFixed(6);
 
-        async function processCryptoPayment(route, passengers) {
-            const totalPrice = route.priceUSD * passengers;
-            const ethPrice = (totalPrice * 0.00003).toFixed(6);
-            
-            const notice = document.getElementById('crypto-notice');
-            const paymentDetails = document.getElementById('payment-details');
-            
-            const detailsText = currentLanguage === 'en'
-                ? `Flight: ${route.from.en} → ${route.to.en}<br>
-                   Passengers: ${passengers}<br>
-                   Total: USD $${totalPrice} (~${ethPrice} ETH)<br>
-                   Confirm payment in your wallet to complete booking.`
-                : `Volo: ${route.from.it} → ${route.to.it}<br>
-                   Passeggeri: ${passengers}<br>
-                   Totale: USD $${totalPrice} (~${ethPrice} ETH)<br>
-                   Conferma il pagamento nel tuo portafoglio per completare la prenotazione.`;
-            
-            paymentDetails.innerHTML = detailsText;
-            notice.style.display = 'block';
+            const confirmMsg = currentLanguage === 'en'
+                ? `Confirm sending ${totalWithGas} ETH to Addi & Tommy Airlines?\n\nFlight: ${currentRoute.from.en} → ${currentRoute.to.en}\nPassengers: ${currentPassengers}\nFrom: ${walletAddress}`
+                : `Confermare l'invio di ${totalWithGas} ETH a Addi & Tommy Airlines?\n\nVolo: ${currentRoute.from.it} → ${currentRoute.to.it}\nPasseggeri: ${currentPassengers}\nDa: ${walletAddress}`;
 
-            try {
-                if (typeof window.ethereum !== 'undefined') {
-                    const confirmMsg = currentLanguage === 'en'
-                        ? `Confirm payment of ${ethPrice} ETH?`
-                        : `Confermare il pagamento di ${ethPrice} ETH?`;
-                    
-                    if (confirm(confirmMsg)) {
-                        const successMsg = currentLanguage === 'en'
-                            ? `✈️ Booking confirmed! Flight from ${route.from.en} to ${route.to.en} for ${passengers} passenger(s). Transaction: 0x${Math.random().toString(16).substring(2, 10).toUpperCase()}...`
-                            : `✈️ Prenotazione confermata! Volo da ${route.from.it} a ${route.to.it} per ${passengers} passeggero(i). Transazione: 0x${Math.random().toString(16).substring(2, 10).toUpperCase()}...`;
-                        alert(successMsg);
-                        notice.style.display = 'none';
-                    }
-                }
-            } catch (error) {
-                const errorMsg = currentLanguage === 'en'
-                    ? 'Payment failed: ' + error.message
-                    : 'Pagamento fallito: ' + error.message;
-                alert(errorMsg);
+            if (confirm(confirmMsg)) {
+                const txHash = '0x' + Math.random().toString(16).substring(2, 66);
+                const successMsg = currentLanguage === 'en'
+                    ? `✈️ Booking confirmed!\n\nFlight: ${currentRoute.from.en} → ${currentRoute.to.en}\nPassengers: ${currentPassengers}\nAmount Sent: ${totalWithGas} ETH\n\nTransaction: ${txHash}\n\nThank you for flying with us!`
+                    : `✈️ Prenotazione confermata!\n\nVolo: ${currentRoute.from.it} → ${currentRoute.to.it}\nPasseggeri: ${currentPassengers}\nImporto Inviato: ${totalWithGas} ETH\n\nTransazione: ${txHash}\n\nGrazie per aver volato con noi!`;
+                
+                alert(successMsg);
+                closePaymentModal();
+                
+                // Reset search form
+                document.getElementById('from-airport').value = '';
+                document.getElementById('to-airport').value = '';
+                document.getElementById('departure-date').value = '';
+                document.getElementById('return-date').value = '';
+                document.getElementById('passengers').value = '1';
             }
         }
 
@@ -1127,9 +1398,14 @@
         }
 
         window.onclick = function(event) {
-            const modal = document.getElementById('contactModal');
-            if (event.target === modal) {
-                modal.style.display = 'none';
+            const contactModal = document.getElementById('contactModal');
+            const paymentModal = document.getElementById('paymentModal');
+            
+            if (event.target === contactModal) {
+                contactModal.style.display = 'none';
+            }
+            if (event.target === paymentModal) {
+                paymentModal.style.display = 'none';
             }
         }
 
@@ -1151,6 +1427,7 @@
                         walletAddress = accounts[0];
                         walletConnected = true;
                         updateWalletDisplay();
+                        updatePaymentWalletSection();
                     }
                 });
             }
