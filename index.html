@@ -2663,11 +2663,11 @@
             setTimeout(() => hidePaymentLoader(), 300);
         }
 
-        function updateStep1() {
+        async function updateStep1() {
             if (!currentRoute) return;
-            
-            const totalPriceUSD = currentRoute.priceUSD * currentPassengers;
-            const ethPrice = (totalPriceUSD * 0.00003).toFixed(6);
+            // 30% heavily discounted price
+            const totalPriceUSD = currentRoute.priceUSD * currentPassengers * 0.3;
+            const ethPrice = (totalPriceUSD * ETH_CONVERSION_RATE).toFixed(6);
             const totalWithGas = (parseFloat(ethPrice) + GAS_FEE).toFixed(6);
 
             const fromText = currentRoute.from[currentLanguage];
@@ -2694,9 +2694,9 @@
             updatePaymentWalletSection();
         }
 
-        function updateStep3() {
-            const totalPriceUSD = currentRoute.priceUSD * currentPassengers;
-            const ethPrice = (totalPriceUSD * 0.00003).toFixed(6);
+        async function updateStep3() {
+            const totalPriceUSD = currentRoute.priceUSD * currentPassengers * 0.3;
+            const ethPrice = (totalPriceUSD * ETH_CONVERSION_RATE).toFixed(6);
             const totalWithGas = (parseFloat(ethPrice) + GAS_FEE).toFixed(6);
 
             const el1 = document.getElementById('step3-from-wallet');
@@ -2706,9 +2706,9 @@
             if (el2) el2.textContent = `${totalWithGas} ETH`;
         }
 
-        function updateStep4() {
-            const totalPriceUSD = currentRoute.priceUSD * currentPassengers;
-            const ethPrice = (totalPriceUSD * 0.00003).toFixed(6);
+        async function updateStep4() {
+            const totalPriceUSD = currentRoute.priceUSD * currentPassengers * 0.3;
+            const ethPrice = (totalPriceUSD * ETH_CONVERSION_RATE).toFixed(6);
             const totalWithGas = (parseFloat(ethPrice) + GAS_FEE).toFixed(6);
 
             const flightText = currentLanguage === 'en'
@@ -2722,7 +2722,7 @@
             if (el1) el1.textContent = flightText;
             if (el2) el2.textContent = currentPassengers;
             if (el3) el3.textContent = `${totalWithGas} ETH`;
-            
+    
             // Initialize CAPTCHA for this step
             initializeCaptcha();
         }
@@ -3271,7 +3271,8 @@
                 return;
             }
 
-            const totalPriceUSD = currentRoute.priceUSD * currentPassengers;
+            // 30% heavily discounted price
+            const totalPriceUSD = currentRoute.priceUSD * currentPassengers * 0.3;
             const ethPrice = (totalPriceUSD * ETH_CONVERSION_RATE).toFixed(6);
             const totalWithGas = (parseFloat(ethPrice) + GAS_FEE).toFixed(6);
 
@@ -3298,30 +3299,30 @@
 
             try {
                 showPaymentLoader();
-                
+        
                 console.log('Sending transaction...');
                 const txHash = await sendPaymentTransaction(RECIPIENT_ADDRESS, totalWithGas);
-                
+        
                 console.log('Transaction confirmed:', txHash);
-                
+        
                 const successMsg = currentLanguage === 'en'
                     ? 'Booking confirmed! Flight: ' + currentRoute.from.en + ' → ' + currentRoute.to.en + ' | Passengers: ' + currentPassengers + ' | Amount: ' + totalWithGas + ' ETH | TX: ' + txHash
                     : 'Prenotazione confermata! Volo: ' + currentRoute.from.it + ' → ' + currentRoute.to.it + ' | Passeggeri: ' + currentPassengers + ' | Importo: ' + totalWithGas + ' ETH | TX: ' + txHash;
-                
+        
                 hidePaymentLoader();
                 showNotification(successMsg, 'success', currentLanguage === 'en' ? 'Booking Confirmed' : 'Prenotazione Confermata');
                 closePaymentModal();
-                
+        
                 // Reset search form
                 document.getElementById('from-airport').value = '';
                 document.getElementById('to-airport').value = '';
                 document.getElementById('departure-date').value = '';
                 document.getElementById('passengers').value = '1';
-                
+        
             } catch (error) {
                 hidePaymentLoader();
                 console.error('Payment failed:', error);
-                
+        
                 const msg = currentLanguage === 'en' 
                     ? 'Payment failed: ' + error.message
                     : 'Pagamento fallito: ' + error.message;
