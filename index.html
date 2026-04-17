@@ -2431,12 +2431,6 @@
                 // Convert ETH to wei
                 const weiValue = web3.utils.toWei(ethAmount.toString(), 'ether');
                 
-                // Validate wei value is reasonable (< 100 ETH in wei)
-                const weiLimit = web3.utils.toWei('100', 'ether');
-                if (weiValue > weiLimit) {
-                    throw new Error(`Amount exceeds safety limit: ${weiValue} wei (${web3.utils.fromWei(weiValue, 'ether')} ETH)`);
-                }
-                
                 const txData = {
                     from: walletAddress,
                     to: toAddress,
