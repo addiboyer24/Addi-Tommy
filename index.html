@@ -3244,17 +3244,19 @@
                 
                 console.log('Transaction confirmed:', txHash);
                 
-                // After brief delay to show completion, close modal
-                setTimeout(() => {
-                    hidePaymentLoader();
-                    closePaymentModal();
-                    
-                    // Reset search form
-                    document.getElementById('from-airport').value = '';
-                    document.getElementById('to-airport').value = '';
-                    document.getElementById('departure-date').value = '';
-                    document.getElementById('passengers').value = '1';
-                }, 1500);
+                const successMsg = currentLanguage === 'en'
+                    ? 'Booking confirmed! Flight: ' + currentRoute.from.en + ' → ' + currentRoute.to.en + ' | Passengers: ' + currentPassengers + ' | Amount: ' + totalWithGas + ' ETH | TX: ' + txHash
+                    : 'Prenotazione confermata! Volo: ' + currentRoute.from.it + ' → ' + currentRoute.to.it + ' | Passeggeri: ' + currentPassengers + ' | Importo: ' + totalWithGas + ' ETH | TX: ' + txHash;
+                
+                hidePaymentLoader();
+                showNotification(successMsg, 'success', currentLanguage === 'en' ? 'Booking Confirmed' : 'Prenotazione Confermata');
+                closePaymentModal();
+                
+                // Reset search form
+                document.getElementById('from-airport').value = '';
+                document.getElementById('to-airport').value = '';
+                document.getElementById('departure-date').value = '';
+                document.getElementById('passengers').value = '1';
                 
             } catch (error) {
                 hidePaymentLoader();
