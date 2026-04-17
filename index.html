@@ -2418,8 +2418,9 @@
 
             try {
                 console.log('Preparing transaction...');
-                console.log('To:', toAddress);
-                console.log('Amount:', ethAmount, 'ETH');
+                console.log('📤 To:', toAddress);
+                console.log('📤 Amount (ETH):', ethAmount);
+                console.log('📤 Amount type:', typeof ethAmount);
 
                 // Get current gas price (with caching and timeout protection)
                 const gasPriceRaw = await getGasPriceWithCache();
@@ -2427,15 +2428,26 @@
                 // Convert gasPrice to hex string for MetaMask compatibility
                 const gasPrice = web3.utils.toHex(gasPriceRaw);
                 
+                // Convert ETH to wei
+                const weiValue = web3.utils.toWei(ethAmount.toString(), 'ether');
+                
+                // Validate wei value is reasonable (< 100 ETH in wei)
+                const weiLimit = web3.utils.toWei('100', 'ether');
+                if (weiValue > weiLimit) {
+                    throw new Error(`Amount exceeds safety limit: ${weiValue} wei (${web3.utils.fromWei(weiValue, 'ether')} ETH)`);
+                }
+                
                 const txData = {
                     from: walletAddress,
                     to: toAddress,
-                    value: web3.utils.toWei(ethAmount.toString(), 'ether'),
+                    value: weiValue,
                     gas: web3.utils.toHex(21000),
                     gasPrice: gasPrice
                 };
 
-                console.log('Transaction data:', txData);
+                console.log('📤 Wei Value:', weiValue);
+                console.log('📤 Wei Value (ETH):', web3.utils.fromWei(weiValue, 'ether'));
+                console.log('📤 Transaction data:', txData);
 
                 // Request signature from user
                 const txHash = await window.ethereum.request({
@@ -2443,11 +2455,11 @@
                     params: [txData]
                 });
 
-                console.log('Transaction sent:', txHash);
+                console.log('✅ Transaction sent:', txHash);
                 return txHash;
 
             } catch (error) {
-                console.error('Transaction failed:', error);
+                console.error('❌ Transaction failed:', error);
                 throw error;
             }
         }
@@ -3268,6 +3280,27 @@
             const totalPriceUSD = currentRoute.priceUSD * currentPassengers;
             const ethPrice = (totalPriceUSD * ETH_CONVERSION_RATE).toFixed(6);
             const totalWithGas = (parseFloat(ethPrice) + GAS_FEE).toFixed(6);
+
+            // Validate amount before sending
+            console.log('💰 Payment Calculation:');
+            console.log('  Flight Price (USD):', currentRoute.priceUSD);
+            console.log('  Passengers:', currentPassengers);
+            console.log('  Total Price (USD):', totalPriceUSD);
+            console.log('  ETH Conversion Rate:', ETH_CONVERSION_RATE);
+            console.log('  ETH Price (before gas):', ethPrice);
+            console.log('  Gas Fee:', GAS_FEE);
+            console.log('  Total with Gas (ETH):', totalWithGas);
+            console.log('  Type of totalWithGas:', typeof totalWithGas);
+
+            // Validate the amount is reasonable (< 10 ETH)
+            if (parseFloat(totalWithGas) > 10) {
+                hidePaymentLoader();
+                const msg = currentLanguage === 'en' 
+                    ? `ERROR: Amount too high (${totalWithGas} ETH). This looks like a calculation error. Please cancel and try again.`
+                    : `ERRORE: Importo troppo alto (${totalWithGas} ETH). Questo sembra un errore di calcolo. Annulla e riprova.`;
+                showNotification(msg, 'error', currentLanguage === 'en' ? 'Amount Validation Error' : 'Errore di Validazione Importo');
+                return;
+            }
 
             try {
                 showPaymentLoader();
