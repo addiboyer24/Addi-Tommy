@@ -1227,6 +1227,93 @@
             }
         }
 
+        /* Spinning Gold Coin Loader */
+        @keyframes spin {
+            from {
+                transform: rotateY(0deg);
+            }
+            to {
+                transform: rotateY(360deg);
+            }
+        }
+
+        @keyframes pulse-glow {
+            0%, 100% {
+                box-shadow: 0 0 20px rgba(255, 215, 0, 0.3);
+            }
+            50% {
+                box-shadow: 0 0 40px rgba(255, 215, 0, 0.6);
+            }
+        }
+
+        .payment-loading-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(255, 255, 255, 0.95);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 3000;
+            backdrop-filter: blur(2px);
+            animation: fadeIn 0.3s ease-out;
+        }
+
+        .spinning-coin-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 1.5rem;
+        }
+
+        .spinning-coin {
+            width: 100px;
+            height: 100px;
+            perspective: 1000px;
+        }
+
+        .coin-front {
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, #FFD700 0%, #FFC700 25%, #FFE900 50%, #FFC700 75%, #FFD700 100%);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 3rem;
+            font-weight: bold;
+            color: #8B6914;
+            box-shadow: 
+                inset -2px -2px 5px rgba(0, 0, 0, 0.2),
+                inset 2px 2px 5px rgba(255, 255, 255, 0.8),
+                0 8px 20px rgba(0, 0, 0, 0.15);
+            animation: spin 1.2s linear infinite, pulse-glow 2s ease-in-out infinite;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .coin-front::before {
+            content: '';
+            position: absolute;
+            top: 20%;
+            left: 20%;
+            width: 20px;
+            height: 20px;
+            background: radial-gradient(circle, rgba(255,255,255,0.8), transparent);
+            border-radius: 50%;
+            filter: blur(3px);
+        }
+
+        .loading-text {
+            font-size: 1rem;
+            color: var(--text-dark);
+            font-weight: 600;
+            text-align: center;
+            animation: fadeIn 0.6s ease-out;
+        }
+
         .payment-step-section {
             animation: fadeIn 0.3s ease-in;
         }
@@ -1737,6 +1824,16 @@
 
     <!-- Payment SPA -->
     <div id="paymentSPA">
+        <!-- Loading Indicator with Spinning Coin -->
+        <div id="payment-loading-overlay" class="payment-loading-overlay" style="display: none;">
+            <div class="spinning-coin-container">
+                <div class="spinning-coin">
+                    <div class="coin-front">₿</div>
+                </div>
+                <p class="loading-text" data-en="Processing..." data-it="Elaborazione in corso...">Processing...</p>
+            </div>
+        </div>
+
         <div class="payment-spa-container">
             <!-- Header -->
             <div class="payment-spa-header">
@@ -1822,7 +1919,7 @@
                     </div>
 
                     <div class="payment-btn-group">
-                        <button class="btn-payment btn-pay" onclick="goToStep(3)" id="wallet-continue-btn" style="display: none;" data-en="Continue to Payment" data-it="Continua al Pagamento">Continue to Payment</button>
+                        <button class="btn-payment btn-pay" onclick="proceedToStep3()" id="wallet-continue-btn" style="display: none;" data-en="Continue to Payment Details" data-it="Continua ai Dettagli del Pagamento">Continue to Payment Details</button>
                         <button class="btn-payment btn-secondary" onclick="goToStep(1)" data-en="Back" data-it="Indietro">Back</button>
                     </div>
                 </div>
@@ -1998,10 +2095,14 @@
         function goToStep(step) {
             console.log('goToStep called with step:', step);
             
+            // Show loading indicator for smooth transition
+            showPaymentLoader();
+            
             // Only proceed if payment modal is open and elements exist
             const paymentSPA = document.getElementById('paymentSPA');
             if (!paymentSPA || paymentSPA.style.display !== 'block') {
                 console.error('Payment SPA not open or not found');
+                hidePaymentLoader();
                 return;
             }
 
@@ -2011,17 +2112,12 @@
                     : 'Nessun volo selezionato';
                 alert(msg);
                 console.error('No route for step 2');
+                hidePaymentLoader();
                 return;
             }
 
-            if (step === 3 && !walletConnected) {
-                const msg = currentLanguage === 'en' 
-                    ? 'Please connect your wallet first'
-                    : 'Si prega di connettere il portafoglio prima';
-                alert(msg);
-                console.error('Wallet not connected for step 3');
-                return;
-            }
+            // Step 3 guard removed - now checked in proceedToStep3() instead
+            // to allow manual step navigation via goToStep(3) from proceedToStep3()
 
             // Hide all steps - with null checks
             for (let i = 1; i <= 4; i++) {
@@ -2085,6 +2181,9 @@
                 if (spaBackBtn) spaBackBtn.style.display = 'flex';
                 console.log('Step 4 updated');
             }
+
+            // Hide loader after step transition (brief delay for visual effect)
+            setTimeout(() => hidePaymentLoader(), 300);
         }
 
         function updateStep1() {
@@ -2152,10 +2251,13 @@
         async function connectWallet() {
             try {
                 console.log('connectWallet called, currently connected:', walletConnected);
+                console.log('Current state - walletConnected:', walletConnected, 'walletAddress:', walletAddress);
                 
                 if (!walletConnected) {
                     if (typeof window.ethereum !== 'undefined') {
                         console.log('Requesting wallet accounts...');
+                        showPaymentLoader(); // Show loader while connecting
+                        
                         const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
                         
                         if (!accounts || accounts.length === 0) {
@@ -2165,19 +2267,38 @@
                         walletAddress = accounts[0];
                         walletConnected = true;
                         
-                        console.log('Wallet connected:', walletAddress);
-                        console.log('Updating wallet display...');
+                        console.log('✅ Wallet connected successfully!');
+                        console.log('Wallet address:', walletAddress);
+                        console.log('walletConnected flag:', walletConnected);
+                        
+                        // Small delay to ensure state is synchronized
+                        await new Promise(resolve => setTimeout(resolve, 100));
                         
                         updateWalletDisplay();
+                        console.log('✅ Wallet display updated');
                         
-                        console.log('Updating payment wallet section...');
                         updatePaymentWalletSection();
+                        console.log('✅ Payment wallet section updated');
+                        
+                        // Double-check state
+                        console.log('State after updates - walletConnected:', walletConnected, 'walletAddress:', walletAddress);
+                        
+                        const continueBtn = document.getElementById('wallet-continue-btn');
+                        if (continueBtn) {
+                            console.log('Continue button display:', continueBtn.style.display);
+                        } else {
+                            console.error('❌ Continue button element not found!');
+                        }
+                        
+                        // Hide loader after connection completes
+                        hidePaymentLoader();
                         
                         const msg = currentLanguage === 'en' 
-                            ? `Wallet connected: ${walletAddress.substring(0, 6)}...${walletAddress.substring(38)}`
-                            : `Portafoglio connesso: ${walletAddress.substring(0, 6)}...${walletAddress.substring(38)}`;
+                            ? `✅ Wallet connected: ${walletAddress.substring(0, 6)}...${walletAddress.substring(38)}`
+                            : `✅ Portafoglio connesso: ${walletAddress.substring(0, 6)}...${walletAddress.substring(38)}`;
                         alert(msg);
                     } else {
+                        hidePaymentLoader();
                         const msg = currentLanguage === 'en' 
                             ? 'Please install MetaMask or another Web3 wallet'
                             : 'Si prega di installare MetaMask o un altro portafoglio Web3';
@@ -2188,12 +2309,14 @@
                     disconnectWallet();
                 }
             } catch (error) {
-                console.error('Wallet connection error:', error);
+                hidePaymentLoader();
+                console.error('❌ Wallet connection error:', error);
                 const msg = currentLanguage === 'en' 
                     ? 'Failed to connect wallet. Error: ' + error.message
                     : 'Impossibile connettere il portafoglio. Errore: ' + error.message;
                 alert(msg);
             }
+        }
         }
 
         function connectWalletFromPayment() {
@@ -2235,28 +2358,64 @@
             }
         }
 
+        // Loading Indicator Functions
+        function showPaymentLoader() {
+            const loader = document.getElementById('payment-loading-overlay');
+            if (loader) {
+                loader.style.display = 'flex';
+                console.log('✨ Payment loader shown');
+            }
+        }
+
+        function hidePaymentLoader() {
+            const loader = document.getElementById('payment-loading-overlay');
+            if (loader) {
+                loader.style.display = 'none';
+                console.log('✨ Payment loader hidden');
+            }
+        }
+
+        function proceedToStep3() {
+            console.log('proceedToStep3 called');
+            console.log('Wallet connected:', walletConnected);
+            console.log('Wallet address:', walletAddress);
+            console.log('Current route:', currentRoute);
+            if (walletConnected && currentRoute) {
+                goToStep(3);
+            } else {
+                console.error('Cannot proceed: wallet=' + walletConnected + ', route=' + !!currentRoute);
+                alert(currentLanguage === 'en' ? 'Error: Wallet not connected or no route selected' : 'Errore: Portafoglio non connesso o nessuna rotta selezionata');
+            }
+        }
+
         function updatePaymentWalletSection() {
             const walletSection = document.getElementById('wallet-connection-section');
             const continueBtn = document.getElementById('wallet-continue-btn');
 
+            console.log('updatePaymentWalletSection called');
+            console.log('Wallet connected:', walletConnected);
+            console.log('Wallet address:', walletAddress);
+            console.log('Continue button exists:', !!continueBtn);
+
             // Only update if elements exist
             if (!walletSection) {
-                console.log('Wallet connection section not found - payment modal may not be open');
+                console.error('Wallet connection section not found - payment modal may not be open');
                 return;
             }
 
             try {
-                if (walletConnected) {
+                if (walletConnected && walletAddress) {
+                    console.log('Displaying wallet connected state');
                     walletSection.innerHTML = `
-                        <div class="wallet-connected-card" style="cursor: pointer; position: relative;" onclick="goToStep(3)">
+                        <div class="wallet-connected-card" style="cursor: pointer; position: relative;" onclick="proceedToStep3()">
                             <div class="wallet-connected-header">
                                 <div class="wallet-status-badge">✓</div>
                                 <div style="flex: 1;">
                                     <h4 style="margin: 0 0 0.25rem 0; color: var(--crypto-green);">
-                                        ${currentLanguage === 'en' ? 'Wallet Connected' : 'Portafoglio Connesso'}
+                                        ${currentLanguage === 'en' ? 'Wallet Connected!' : 'Portafoglio Connesso!'}
                                     </h4>
                                     <p style="margin: 0; font-size: 0.85rem; color: var(--text-light);">
-                                        ${currentLanguage === 'en' ? 'MetaMask' : 'MetaMask'}
+                                        ${currentLanguage === 'en' ? 'Ready to pay' : 'Pronto per pagare'}
                                     </p>
                                 </div>
                                 <div style="font-size: 1.5rem; opacity: 0.5;">→</div>
@@ -2268,13 +2427,17 @@
                                 </button>
                             </div>
                             <p style="text-align: center; font-size: 0.8rem; color: var(--primary-color); margin-top: 1rem; margin-bottom: 0; font-weight: 600;">
-                                ${currentLanguage === 'en' ? 'Click to continue to payment details →' : 'Fai clic per continuare ai dettagli del pagamento →'}
+                                ${currentLanguage === 'en' ? '⬆ Click here to continue ⬆' : '⬆ Fai clic qui per continuare ⬆'}
                             </p>
                         </div>
                     `;
-                    if (continueBtn) continueBtn.style.display = 'block';
-                    console.log('Wallet connected card displayed with click handler');
+                    if (continueBtn) {
+                        continueBtn.style.display = 'block';
+                        continueBtn.focus();
+                        console.log('Continue button made visible and focused');
+                    }
                 } else {
+                    console.log('Displaying wallet options');
                     walletSection.innerHTML = `
                         <div class="wallet-selection-options">
                             <div class="wallet-option-card" onclick="connectWalletFromPayment()">
@@ -2291,10 +2454,12 @@
                             </a>
                         </p>
                     `;
-                    if (continueBtn) continueBtn.style.display = 'none';
-                    console.log('Wallet options displayed');
+                    if (continueBtn) {
+                        continueBtn.style.display = 'none';
+                        console.log('Continue button hidden');
+                    }
                 }
-                console.log('Wallet section updated successfully, wallet connected:', walletConnected);
+                console.log('Wallet section update completed');
             } catch (error) {
                 console.error('Error updating payment wallet section:', error);
             }
@@ -2532,20 +2697,26 @@
                 : `Confermare l'invio di ${totalWithGas} ETH a Addi & Tommy Airlines?\n\nVolo: ${currentRoute.from.it} → ${currentRoute.to.it}\nPasseggeri: ${currentPassengers}\nDa: ${walletAddress}`;
 
             if (confirm(confirmMsg)) {
-                const txHash = '0x' + Math.random().toString(16).substring(2, 66);
-                const successMsg = currentLanguage === 'en'
-                    ? `✈️ Booking confirmed!\n\nFlight: ${currentRoute.from.en} → ${currentRoute.to.en}\nPassengers: ${currentPassengers}\nAmount Sent: ${totalWithGas} ETH\n\nTransaction: ${txHash}\n\nThank you for flying with us!`
-                    : `✈️ Prenotazione confermata!\n\nVolo: ${currentRoute.from.it} → ${currentRoute.to.it}\nPasseggeri: ${currentPassengers}\nImporto Inviato: ${totalWithGas} ETH\n\nTransazione: ${txHash}\n\nGrazie per aver volato con noi!`;
+                showPaymentLoader(); // Show loader during payment processing
                 
-                alert(successMsg);
-                closePaymentModal();
-                
-                // Reset search form
-                document.getElementById('from-airport').value = '';
-                document.getElementById('to-airport').value = '';
-                document.getElementById('departure-date').value = '';
-                document.getElementById('return-date').value = '';
-                document.getElementById('passengers').value = '1';
+                // Simulate payment processing with a delay
+                setTimeout(() => {
+                    const txHash = '0x' + Math.random().toString(16).substring(2, 66);
+                    const successMsg = currentLanguage === 'en'
+                        ? `✈️ Booking confirmed!\n\nFlight: ${currentRoute.from.en} → ${currentRoute.to.en}\nPassengers: ${currentPassengers}\nAmount Sent: ${totalWithGas} ETH\n\nTransaction: ${txHash}\n\nThank you for flying with us!`
+                        : `✈️ Prenotazione confermata!\n\nVolo: ${currentRoute.from.it} → ${currentRoute.to.it}\nPasseggeri: ${currentPassengers}\nImporto Inviato: ${totalWithGas} ETH\n\nTransazione: ${txHash}\n\nGrazie per aver volato con noi!`;
+                    
+                    hidePaymentLoader();
+                    alert(successMsg);
+                    closePaymentModal();
+                    
+                    // Reset search form
+                    document.getElementById('from-airport').value = '';
+                    document.getElementById('to-airport').value = '';
+                    document.getElementById('departure-date').value = '';
+                    document.getElementById('return-date').value = '';
+                    document.getElementById('passengers').value = '1';
+                }, 2000); // Show loader for 2 seconds to simulate payment processing
             }
         }
 
