@@ -925,6 +925,128 @@
             background: #059669;
         }
 
+        /* Wallet Selection Cards */
+        .wallet-selection-options {
+            display: grid;
+            gap: 1rem;
+        }
+
+        .wallet-option-card {
+            background: white;
+            border: 2px solid #e5e7eb;
+            border-radius: 12px;
+            padding: 1.5rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+            text-align: center;
+        }
+
+        .wallet-option-card:hover {
+            border-color: var(--primary-color);
+            box-shadow: 0 4px 12px rgba(59, 130, 246, 0.2);
+            transform: translateY(-2px);
+        }
+
+        .wallet-icon {
+            font-size: 3rem;
+            margin-bottom: 0.75rem;
+        }
+
+        .wallet-option-card h4 {
+            margin: 0.75rem 0 0.5rem 0;
+            color: var(--text-dark);
+            font-size: 1.1rem;
+        }
+
+        .wallet-option-card p {
+            margin: 0;
+            color: var(--text-light);
+            font-size: 0.85rem;
+        }
+
+        .wallet-option-arrow {
+            position: absolute;
+            right: 1rem;
+            top: 50%;
+            transform: translateY(-50%);
+            font-size: 1.5rem;
+            color: var(--primary-color);
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+
+        .wallet-option-card:hover .wallet-option-arrow {
+            opacity: 1;
+        }
+
+        /* Wallet Connected Card */
+        .wallet-connected-card {
+            background: linear-gradient(135deg, #d1fae5 0%, #a7f3d0 100%);
+            border: 2px solid var(--crypto-green);
+            border-radius: 12px;
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .wallet-connected-header {
+            display: flex;
+            gap: 1rem;
+            align-items: flex-start;
+            margin-bottom: 1rem;
+        }
+
+        .wallet-status-badge {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 40px;
+            height: 40px;
+            background: var(--crypto-green);
+            color: white;
+            border-radius: 50%;
+            font-size: 1.5rem;
+            font-weight: bold;
+            flex-shrink: 0;
+        }
+
+        .wallet-connected-header h4 {
+            margin: 0;
+        }
+
+        .wallet-connected-header p {
+            margin: 0;
+        }
+
+        .wallet-address-display {
+            background: rgba(255, 255, 255, 0.7);
+            border-radius: 8px;
+            padding: 1rem;
+            font-family: 'Courier New', monospace;
+            font-size: 0.9rem;
+            word-break: break-all;
+            line-height: 1.5;
+            color: var(--text-dark);
+        }
+
+        .btn-disconnect {
+            width: 100%;
+            padding: 0.5rem;
+            border: 1px solid var(--text-light);
+            background: transparent;
+            color: var(--text-dark);
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 0.85rem;
+            transition: all 0.3s;
+            margin-top: 0.75rem;
+        }
+
+        .btn-disconnect:hover {
+            background: rgba(255, 255, 255, 0.5);
+            border-color: var(--text-dark);
+        }
+
         /* Confirmation Screen Styles - Mobile Optimized */
         .payment-confirmation-screen {
             display: none;
@@ -1302,6 +1424,63 @@
 
             .wallet-address-display {
                 font-size: 0.75rem;
+            }
+
+            /* Mobile Wallet Selection Cards */
+            .wallet-option-card {
+                padding: 1.25rem 1rem;
+                border-radius: 10px;
+            }
+
+            .wallet-icon {
+                font-size: 2.5rem;
+                margin-bottom: 0.5rem;
+            }
+
+            .wallet-option-card h4 {
+                font-size: 1rem;
+                margin: 0.5rem 0 0.25rem 0;
+            }
+
+            .wallet-option-card p {
+                font-size: 0.75rem;
+            }
+
+            .wallet-option-arrow {
+                right: 0.75rem;
+            }
+
+            .wallet-connected-card {
+                padding: 1rem;
+                margin-bottom: 1rem;
+            }
+
+            .wallet-connected-header {
+                gap: 0.75rem;
+            }
+
+            .wallet-status-badge {
+                width: 36px;
+                height: 36px;
+                font-size: 1.25rem;
+            }
+
+            .wallet-connected-header h4 {
+                font-size: 0.95rem;
+            }
+
+            .wallet-connected-header p {
+                font-size: 0.8rem;
+            }
+
+            .wallet-address-display {
+                font-size: 0.75rem;
+                padding: 0.75rem;
+            }
+
+            .btn-disconnect {
+                padding: 0.5rem;
+                font-size: 0.8rem;
             }
 
             .confirmation-header {
@@ -2070,18 +2249,43 @@
             try {
                 if (walletConnected) {
                     walletSection.innerHTML = `
-                        <div class="wallet-connection-notice success">
-                            <strong>✓ ${currentLanguage === 'en' ? 'Wallet Connected' : 'Portafoglio Connesso'}</strong>
-                            <p style="margin-top: 0.5rem; font-size: 0.85rem;">${walletAddress}</p>
+                        <div class="wallet-connected-card">
+                            <div class="wallet-connected-header">
+                                <div class="wallet-status-badge">✓</div>
+                                <div>
+                                    <h4 style="margin: 0 0 0.25rem 0; color: var(--crypto-green);">
+                                        ${currentLanguage === 'en' ? 'Wallet Connected' : 'Portafoglio Connesso'}
+                                    </h4>
+                                    <p style="margin: 0; font-size: 0.85rem; color: var(--text-light);">
+                                        ${currentLanguage === 'en' ? 'MetaMask' : 'MetaMask'}
+                                    </p>
+                                </div>
+                            </div>
+                            <div class="wallet-address-display">
+                                <span style="font-family: monospace; font-size: 0.9rem; word-break: break-all;">${walletAddress}</span>
+                                <button class="btn-disconnect" onclick="disconnectWallet()" style="margin-top: 0.75rem; width: 100%; padding: 0.5rem; border: 1px solid var(--text-light); background: transparent; color: var(--text-dark); border-radius: 6px; cursor: pointer; font-size: 0.85rem;">
+                                    ${currentLanguage === 'en' ? '🔄 Change Wallet' : '🔄 Cambia Portafoglio'}
+                                </button>
+                            </div>
                         </div>
                     `;
                     paymentFormSection.style.display = 'block';
                 } else {
                     walletSection.innerHTML = `
-                        <div class="wallet-connection-notice">
-                            <p style="margin-bottom: 0.75rem;" data-en="Please connect your wallet to proceed with payment" data-it="Si prega di connettere il portafoglio per procedere con il pagamento">Please connect your wallet to proceed with payment</p>
-                            <button class="connect-wallet-modal-btn" onclick="connectWalletFromPayment()" data-en="Connect Wallet" data-it="Connetti Portafoglio">Connect Wallet</button>
+                        <div class="wallet-selection-options">
+                            <div class="wallet-option-card" onclick="connectWalletFromPayment()">
+                                <div class="wallet-icon">🦊</div>
+                                <h4 data-en="MetaMask" data-it="MetaMask">MetaMask</h4>
+                                <p style="font-size: 0.8rem; color: var(--text-light);" data-en="Most popular Web3 wallet" data-it="Portafoglio Web3 più popolare">Most popular Web3 wallet</p>
+                                <div class="wallet-option-arrow">→</div>
+                            </div>
                         </div>
+                        <p style="text-align: center; font-size: 0.8rem; color: var(--text-light); margin-top: 1rem; margin-bottom: 0;">
+                            <span data-en="Don't have a wallet?" data-it="Non hai un portafoglio?">Don't have a wallet?</span>
+                            <a href="https://metamask.io" target="_blank" style="color: var(--primary-color); text-decoration: none; font-weight: 600;">
+                                <span data-en="Get MetaMask" data-it="Ottieni MetaMask">Get MetaMask</span> ↗
+                            </a>
+                        </p>
                     `;
                     paymentFormSection.style.display = 'none';
                 }
