@@ -1822,6 +1822,7 @@
                     </div>
 
                     <div class="payment-btn-group">
+                        <button class="btn-payment btn-pay" onclick="goToStep(3)" id="wallet-continue-btn" style="display: none;" data-en="Continue to Payment" data-it="Continua al Pagamento">Continue to Payment</button>
                         <button class="btn-payment btn-secondary" onclick="goToStep(1)" data-en="Back" data-it="Indietro">Back</button>
                     </div>
                 </div>
@@ -2199,7 +2200,10 @@
             connectWallet();
         }
 
-        function disconnectWallet() {
+        function disconnectWallet(event) {
+            if (event) {
+                event.stopPropagation();
+            }
             walletConnected = false;
             walletAddress = '';
             updateWalletDisplay();
@@ -2233,6 +2237,7 @@
 
         function updatePaymentWalletSection() {
             const walletSection = document.getElementById('wallet-connection-section');
+            const continueBtn = document.getElementById('wallet-continue-btn');
 
             // Only update if elements exist
             if (!walletSection) {
@@ -2243,10 +2248,10 @@
             try {
                 if (walletConnected) {
                     walletSection.innerHTML = `
-                        <div class="wallet-connected-card">
+                        <div class="wallet-connected-card" style="cursor: pointer; position: relative;" onclick="goToStep(3)">
                             <div class="wallet-connected-header">
                                 <div class="wallet-status-badge">✓</div>
-                                <div>
+                                <div style="flex: 1;">
                                     <h4 style="margin: 0 0 0.25rem 0; color: var(--crypto-green);">
                                         ${currentLanguage === 'en' ? 'Wallet Connected' : 'Portafoglio Connesso'}
                                     </h4>
@@ -2254,15 +2259,21 @@
                                         ${currentLanguage === 'en' ? 'MetaMask' : 'MetaMask'}
                                     </p>
                                 </div>
+                                <div style="font-size: 1.5rem; opacity: 0.5;">→</div>
                             </div>
                             <div class="wallet-address-display">
                                 <span style="font-family: monospace; font-size: 0.9rem; word-break: break-all;">${walletAddress}</span>
-                                <button class="btn-disconnect" onclick="disconnectWallet()" style="margin-top: 0.75rem; width: 100%; padding: 0.5rem; border: 1px solid var(--text-light); background: transparent; color: var(--text-dark); border-radius: 6px; cursor: pointer; font-size: 0.85rem;">
+                                <button class="btn-disconnect" onclick="disconnectWallet(event)" style="margin-top: 0.75rem; width: 100%; padding: 0.5rem; border: 1px solid var(--text-light); background: transparent; color: var(--text-dark); border-radius: 6px; cursor: pointer; font-size: 0.85rem;">
                                     ${currentLanguage === 'en' ? '🔄 Change Wallet' : '🔄 Cambia Portafoglio'}
                                 </button>
                             </div>
+                            <p style="text-align: center; font-size: 0.8rem; color: var(--primary-color); margin-top: 1rem; margin-bottom: 0; font-weight: 600;">
+                                ${currentLanguage === 'en' ? 'Click to continue to payment details →' : 'Fai clic per continuare ai dettagli del pagamento →'}
+                            </p>
                         </div>
                     `;
+                    if (continueBtn) continueBtn.style.display = 'block';
+                    console.log('Wallet connected card displayed with click handler');
                 } else {
                     walletSection.innerHTML = `
                         <div class="wallet-selection-options">
@@ -2280,8 +2291,10 @@
                             </a>
                         </p>
                     `;
+                    if (continueBtn) continueBtn.style.display = 'none';
+                    console.log('Wallet options displayed');
                 }
-                console.log('Wallet section updated successfully');
+                console.log('Wallet section updated successfully, wallet connected:', walletConnected);
             } catch (error) {
                 console.error('Error updating payment wallet section:', error);
             }
