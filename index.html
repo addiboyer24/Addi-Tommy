@@ -19,6 +19,7 @@
             --light-bg: #f5f5f5;
             --text-dark: #333;
             --text-light: #666;
+            --crypto-green: #10b981;
         }
 
         body {
@@ -106,6 +107,34 @@
             background: rgba(255, 255, 255, 0.3);
         }
 
+        .wallet-btn {
+            background: var(--crypto-green);
+            color: white;
+            border: none;
+            padding: 0.75rem 1.5rem;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .wallet-btn:hover {
+            background: #059669;
+            transform: scale(1.05);
+        }
+
+        .wallet-status {
+            background: rgba(16, 185, 129, 0.1);
+            color: var(--crypto-green);
+            padding: 0.25rem 0.75rem;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            border: 1px solid var(--crypto-green);
+        }
+
         /* Hero Section */
         .hero {
             background: linear-gradient(135deg, var(--primary-color) 0%, #004499 50%, var(--secondary-color) 100%);
@@ -123,6 +152,16 @@
             font-size: 1.2rem;
             margin-bottom: 2rem;
             opacity: 0.95;
+        }
+
+        .hero .crypto-notice {
+            background: rgba(0, 0, 0, 0.2);
+            padding: 1rem;
+            border-radius: 10px;
+            margin-bottom: 2rem;
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
         }
 
         .cta-buttons {
@@ -236,9 +275,27 @@
             background: #004499;
         }
 
+        .search-btn:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+        }
+
+        .crypto-payment-notice {
+            background: #d1fae5;
+            border: 2px solid var(--crypto-green);
+            color: #065f46;
+            padding: 1rem;
+            border-radius: 5px;
+            margin-top: 1rem;
+            display: none;
+        }
+
         /* Routes Section */
         .routes-section {
             padding: 3rem 1rem;
+        }
+
+        .routes-container {
             max-width: 1200px;
             margin: 0 auto;
         }
@@ -301,6 +358,13 @@
             margin-bottom: 1rem;
         }
 
+        .route-price-crypto {
+            color: var(--crypto-green);
+            font-weight: bold;
+            font-size: 1rem;
+            margin-top: 0.5rem;
+        }
+
         .route-btn {
             width: 100%;
             background: var(--primary-color);
@@ -338,6 +402,9 @@
         /* About Section */
         .about-section {
             padding: 3rem 1rem;
+        }
+
+        .about-container {
             max-width: 1200px;
             margin: 0 auto;
         }
@@ -530,6 +597,11 @@
             </div>
             <div class="nav-right">
                 <button class="menu-toggle" onclick="toggleMenu()">☰</button>
+                <div id="wallet-status-display"></div>
+                <button class="wallet-btn" onclick="connectWallet()" id="wallet-connect-btn" title="Connect wallet for crypto payments">
+                    <span id="wallet-icon">💳</span>
+                    <span id="wallet-text" data-en="Connect Wallet" data-it="Connetti Portafoglio">Connect Wallet</span>
+                </button>
                 <button class="language-toggle" onclick="toggleLanguage()">
                     <span id="lang-btn">IT</span>
                 </button>
@@ -548,6 +620,10 @@
     <section class="hero">
         <h1 data-en="Fly with Us, Fly with Friends" data-it="Vola con Noi, Vola con Amici">Fly with Us, Fly with Friends</h1>
         <p data-en="Experience premium travel with Addi & Tommy Airlines - where every journey is an adventure" data-it="Sperimenta viaggi premium con Addi & Tommy Airlines - dove ogni viaggio è un'avventura">Experience premium travel with Addi & Tommy Airlines - where every journey is an adventure</p>
+        <div class="crypto-notice">
+            <strong data-en="💰 Crypto Only!" data-it="💰 Solo Cripto!">💰 Crypto Only!</strong>
+            <p data-en="We now accept cryptocurrency payments exclusively. Connect your wallet to book flights." data-it="Ora accettiamo pagamenti in criptovaluta esclusivamente. Connetti il tuo portafoglio per prenotare i voli.">We now accept cryptocurrency payments exclusively. Connect your wallet to book flights.</p>
+        </div>
         <div class="cta-buttons">
             <button class="btn btn-primary" onclick="scrollToSection('search')" data-en="Book Now" data-it="Prenota Ora">Book Now</button>
             <button class="btn btn-secondary" onclick="openContactModal()" data-en="Learn More" data-it="Scopri di Più">Learn More</button>
@@ -597,16 +673,22 @@
                         <option value="5" data-en="5+ Passengers" data-it="5+ Passeggeri">5+ Passengers</option>
                     </select>
                 </div>
-                <button class="search-btn" onclick="searchFlights()" data-en="Search Flights" data-it="Cerca Voli">Search Flights</button>
+                <button class="search-btn" onclick="searchFlights()" id="search-btn" data-en="Search Flights" data-it="Cerca Voli">Search Flights</button>
+            </div>
+            <div class="crypto-payment-notice" id="crypto-notice">
+                <strong data-en="🔐 Crypto Payment Ready" data-it="🔐 Pagamento in Cripto Pronto">🔐 Crypto Payment Ready</strong>
+                <p id="payment-details"></p>
             </div>
         </div>
     </section>
 
     <!-- Routes Section -->
     <section class="routes-section" id="routes">
-        <h2 class="section-title" data-en="🌍 Our Routes" data-it="🌍 Le Nostre Rotte">🌍 Our Routes</h2>
-        <div class="routes-grid" id="routes-grid">
-            <!-- Routes will be populated by JavaScript -->
+        <div class="routes-container">
+            <h2 class="section-title" data-en="🌍 Our Routes" data-it="🌍 Le Nostre Rotte">🌍 Our Routes</h2>
+            <div class="routes-grid" id="routes-grid">
+                <!-- Routes will be populated by JavaScript -->
+            </div>
         </div>
     </section>
 
@@ -620,36 +702,38 @@
 
     <!-- About Section -->
     <section class="about-section" id="about">
-        <div class="about-content">
-            <div class="about-text">
-                <h2 data-en="About Addi & Tommy Airlines" data-it="Su Addi & Tommy Airlines">About Addi & Tommy Airlines</h2>
-                <p data-en="Founded by Addison Boyer and Tommy, we're a modern airline dedicated to connecting people across the United States and Europe with comfort, reliability, and a personal touch." data-it="Fondata da Addison Boyer e Tommy, siamo una compagnia aerea moderna dedicata a connettere le persone negli Stati Uniti e in Europa con comfort, affidabilità e un tocco personale.">Founded by Addison Boyer and Tommy, we're a modern airline dedicated to connecting people across the United States and Europe with comfort, reliability, and a personal touch.</p>
-                <p data-en="Our fleet is carefully curated to provide the best experience whether you're traveling for business or leisure. We believe in making air travel accessible, affordable, and enjoyable." data-it="La nostra flotta è accuratamente selezionata per fornire la migliore esperienza sia che tu stia viaggiando per affari o piacere. Crediamo nel rendere i viaggi aerei accessibili, convenienti e piacevoli.">Our fleet is carefully curated to provide the best experience whether you're traveling for business or leisure. We believe in making air travel accessible, affordable, and enjoyable.</p>
-                <p data-en="With a focus on customer satisfaction and innovative service, Addi & Tommy Airlines is your trusted partner for every journey." data-it="Con un focus sulla soddisfazione del cliente e servizi innovativi, Addi & Tommy Airlines è il tuo partner affidabile per ogni viaggio.">With a focus on customer satisfaction and innovative service, Addi & Tommy Airlines is your trusted partner for every journey.</p>
-                <div class="about-stats">
-                    <div class="stat">
-                        <div class="stat-number">4</div>
-                        <div class="stat-label" data-en="Hub Cities" data-it="Città Hub">Hub Cities</div>
-                    </div>
-                    <div class="stat">
-                        <div class="stat-number">6</div>
-                        <div class="stat-label" data-en="Active Routes" data-it="Rotte Attive">Active Routes</div>
-                    </div>
-                    <div class="stat">
-                        <div class="stat-number">100%</div>
-                        <div class="stat-label" data-en="Satisfaction" data-it="Soddisfazione">Satisfaction</div>
-                    </div>
-                    <div class="stat">
-                        <div class="stat-number">24/7</div>
-                        <div class="stat-label" data-en="Support" data-it="Supporto">Support</div>
+        <div class="about-container">
+            <div class="about-content">
+                <div class="about-text">
+                    <h2 data-en="About Addi & Tommy Airlines" data-it="Su Addi & Tommy Airlines">About Addi & Tommy Airlines</h2>
+                    <p data-en="Founded by Addison Boyer and Tommy, we're a modern airline dedicated to connecting people across the United States and Europe with comfort, reliability, and a personal touch." data-it="Fondata da Addison Boyer e Tommy, siamo una compagnia aerea moderna dedicata a connettere le persone negli Stati Uniti e in Europa con comfort, affidabilità e un tocco personale.">Founded by Addison Boyer and Tommy, we're a modern airline dedicated to connecting people across the United States and Europe with comfort, reliability, and a personal touch.</p>
+                    <p data-en="Our fleet is carefully curated to provide the best experience whether you're traveling for business or leisure. We believe in making air travel accessible, affordable, and enjoyable." data-it="La nostra flotta è accuratamente selezionata per fornire la migliore esperienza sia che tu stia viaggiando per affari o piacere. Crediamo nel rendere i viaggi aerei accessibili, convenienti e piacevoli.">Our fleet is carefully curated to provide the best experience whether you're traveling for business or leisure. We believe in making air travel accessible, affordable, and enjoyable.</p>
+                    <p data-en="With a focus on customer satisfaction and innovative service, Addi & Tommy Airlines is your trusted partner for every journey." data-it="Con un focus sulla soddisfazione del cliente e servizi innovativi, Addi & Tommy Airlines è il tuo partner affidabile per ogni viaggio.">With a focus on customer satisfaction and innovative service, Addi & Tommy Airlines is your trusted partner for every journey.</p>
+                    <div class="about-stats">
+                        <div class="stat">
+                            <div class="stat-number">4</div>
+                            <div class="stat-label" data-en="Hub Cities" data-it="Città Hub">Hub Cities</div>
+                        </div>
+                        <div class="stat">
+                            <div class="stat-number">6</div>
+                            <div class="stat-label" data-en="Active Routes" data-it="Rotte Attive">Active Routes</div>
+                        </div>
+                        <div class="stat">
+                            <div class="stat-number">100%</div>
+                            <div class="stat-label" data-en="Satisfaction" data-it="Soddisfazione">Satisfaction</div>
+                        </div>
+                        <div class="stat">
+                            <div class="stat-number">24/7</div>
+                            <div class="stat-label" data-en="Support" data-it="Supporto">Support</div>
+                        </div>
                     </div>
                 </div>
-            </div>
-            <div style="background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%); border-radius: 10px; padding: 2rem; color: white; text-align: center;">
-                <div style="font-size: 4rem; margin-bottom: 1rem;">✈️</div>
-                <h3 data-en="Ready to Fly?" data-it="Pronto a Volare?">Ready to Fly?</h3>
-                <p style="margin-top: 1rem;" data-en="Join thousands of satisfied passengers who trust Addi & Tommy Airlines" data-it="Unisciti a migliaia di passeggeri soddisfatti che si fidano di Addi & Tommy Airlines">Join thousands of satisfied passengers who trust Addi & Tommy Airlines</p>
-                <button class="btn btn-primary" style="margin-top: 1rem;" onclick="scrollToSection('search')" data-en="Book Your Flight" data-it="Prenota il Tuo Volo">Book Your Flight</button>
+                <div style="background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%); border-radius: 10px; padding: 2rem; color: white; text-align: center;">
+                    <div style="font-size: 4rem; margin-bottom: 1rem;">✈️</div>
+                    <h3 data-en="Ready to Fly?" data-it="Pronto a Volare?">Ready to Fly?</h3>
+                    <p style="margin-top: 1rem;" data-en="Join thousands of satisfied passengers who trust Addi & Tommy Airlines" data-it="Unisciti a migliaia di passeggeri soddisfatti che si fidano di Addi & Tommy Airlines">Join thousands of satisfied passengers who trust Addi & Tommy Airlines</p>
+                    <button class="btn btn-primary" style="margin-top: 1rem;" onclick="scrollToSection('search')" data-en="Book Your Flight" data-it="Prenota il Tuo Volo">Book Your Flight</button>
+                </div>
             </div>
         </div>
     </section>
@@ -712,7 +796,9 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/leaflet@1.9.3/dist/leaflet.css"/>
 
     <script>
-        // Language state
+        // Wallet State
+        let walletConnected = false;
+        let walletAddress = '';
         let currentLanguage = 'en';
 
         // Routes Data
@@ -721,15 +807,27 @@
                 from: { en: 'New York', it: 'New York' },
                 to: { en: 'Hoboken', it: 'Hoboken' },
                 price: 89,
+                priceUSD: 89,
                 duration: '45 min',
                 frequency: { en: 'Daily', it: 'Giornaliero' },
                 fromCode: 'NYC',
                 toCode: 'HBK'
             },
             {
+                from: { en: 'Hoboken', it: 'Hoboken' },
+                to: { en: 'New York', it: 'New York' },
+                price: 89,
+                priceUSD: 89,
+                duration: '45 min',
+                frequency: { en: 'Daily', it: 'Giornaliero' },
+                fromCode: 'HBK',
+                toCode: 'NYC'
+            },
+            {
                 from: { en: 'New York', it: 'New York' },
                 to: { en: 'Missoula', it: 'Missoula' },
                 price: 249,
+                priceUSD: 249,
                 duration: '4h 30m',
                 frequency: { en: 'Daily', it: 'Giornaliero' },
                 fromCode: 'NYC',
@@ -739,6 +837,7 @@
                 from: { en: 'Missoula', it: 'Missoula' },
                 to: { en: 'New York', it: 'New York' },
                 price: 249,
+                priceUSD: 249,
                 duration: '4h 30m',
                 frequency: { en: 'Daily', it: 'Giornaliero' },
                 fromCode: 'MSO',
@@ -748,6 +847,7 @@
                 from: { en: 'Milan', it: 'Milano' },
                 to: { en: 'Hoboken', it: 'Hoboken' },
                 price: 599,
+                priceUSD: 599,
                 duration: '9h 15m',
                 frequency: { en: '3x Weekly', it: '3 volte a settimana' },
                 fromCode: 'MXP',
@@ -757,6 +857,7 @@
                 from: { en: 'New York', it: 'New York' },
                 to: { en: 'Milan', it: 'Milano' },
                 price: 599,
+                priceUSD: 599,
                 duration: '9h 15m',
                 frequency: { en: '3x Weekly', it: '3 volte a settimana' },
                 fromCode: 'NYC',
@@ -766,6 +867,7 @@
                 from: { en: 'Hoboken', it: 'Hoboken' },
                 to: { en: 'Missoula', it: 'Missoula' },
                 price: 199,
+                priceUSD: 199,
                 duration: '5h',
                 frequency: { en: 'Daily', it: 'Giornaliero' },
                 fromCode: 'HBK',
@@ -781,6 +883,62 @@
             'MXP': { lat: 45.6295, lng: 8.7281, name: { en: 'Milan', it: 'Milano' } }
         };
 
+        // WalletConnect Integration
+        async function connectWallet() {
+            try {
+                if (!walletConnected) {
+                    if (typeof window.ethereum !== 'undefined') {
+                        const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
+                        walletAddress = accounts[0];
+                        walletConnected = true;
+                        updateWalletDisplay();
+                        const msg = currentLanguage === 'en' 
+                            ? `Wallet connected: ${walletAddress.substring(0, 6)}...${walletAddress.substring(38)}`
+                            : `Portafoglio connesso: ${walletAddress.substring(0, 6)}...${walletAddress.substring(38)}`;
+                        alert(msg);
+                    } else {
+                        const msg = currentLanguage === 'en' 
+                            ? 'Please install MetaMask or another Web3 wallet'
+                            : 'Si prega di installare MetaMask o un altro portafoglio Web3';
+                        alert(msg);
+                    }
+                } else {
+                    disconnectWallet();
+                }
+            } catch (error) {
+                console.error('Wallet connection error:', error);
+                const msg = currentLanguage === 'en' 
+                    ? 'Failed to connect wallet. Error: ' + error.message
+                    : 'Impossibile connettere il portafoglio. Errore: ' + error.message;
+                alert(msg);
+            }
+        }
+
+        function disconnectWallet() {
+            walletConnected = false;
+            walletAddress = '';
+            updateWalletDisplay();
+        }
+
+        function updateWalletDisplay() {
+            const connectBtn = document.getElementById('wallet-connect-btn');
+            const statusDisplay = document.getElementById('wallet-status-display');
+            const searchBtn = document.getElementById('search-btn');
+
+            if (walletConnected) {
+                connectBtn.textContent = '✓ ' + walletAddress.substring(0, 6) + '...' + walletAddress.substring(38);
+                connectBtn.style.background = 'var(--crypto-green)';
+                connectBtn.style.color = 'white';
+                statusDisplay.innerHTML = `<div class="wallet-status">${currentLanguage === 'en' ? 'Connected' : 'Connesso'}</div>`;
+                searchBtn.disabled = false;
+            } else {
+                connectBtn.textContent = currentLanguage === 'en' ? '💳 Connect Wallet' : '💳 Connetti Portafoglio';
+                connectBtn.style.background = 'var(--crypto-green)';
+                statusDisplay.innerHTML = '';
+                searchBtn.disabled = false;
+            }
+        }
+
         // Language Toggle
         function toggleLanguage() {
             currentLanguage = currentLanguage === 'en' ? 'it' : 'en';
@@ -789,7 +947,6 @@
         }
 
         function updateLanguage() {
-            // Update all elements with data-en and data-it attributes
             document.querySelectorAll('[data-en][data-it]').forEach(element => {
                 const text = element.getAttribute(`data-${currentLanguage}`);
                 if (text) {
@@ -800,9 +957,8 @@
                     }
                 }
             });
-
-            // Update routes
             populateRoutes();
+            updateWalletDisplay();
         }
 
         // Initialize map
@@ -813,7 +969,6 @@
                 maxZoom: 19
             }).addTo(map);
 
-            // Add airport markers
             Object.entries(airports).forEach(([code, airport]) => {
                 const name = airport.name[currentLanguage];
                 L.circleMarker([airport.lat, airport.lng], {
@@ -826,7 +981,6 @@
                 }).bindPopup(`<strong>${name}</strong><br>Code: ${code}`).addTo(map);
             });
 
-            // Add route lines
             routes.forEach(route => {
                 const from = airports[route.fromCode];
                 const to = airports[route.toCode];
@@ -842,8 +996,6 @@
             const routesGrid = document.getElementById('routes-grid');
             routesGrid.innerHTML = routes.map(route => {
                 const selectText = currentLanguage === 'en' ? 'Select Route' : 'Seleziona Rotta';
-                const timeText = currentLanguage === 'en' ? '⏱️' : '⏱️';
-                const freqText = currentLanguage === 'en' ? '📅' : '📅';
                 return `
                     <div class="route-card">
                         <div class="route-header">
@@ -851,10 +1003,11 @@
                         </div>
                         <div class="route-body">
                             <div class="route-info">
-                                <span>${timeText} ${route.duration}</span>
-                                <span>${freqText} ${route.frequency[currentLanguage]}</span>
+                                <span>⏱️ ${route.duration}</span>
+                                <span>📅 ${route.frequency[currentLanguage]}</span>
                             </div>
-                            <div class="route-price">$${route.price}</div>
+                            <div class="route-price">USD $${route.price}</div>
+                            <div class="route-price-crypto">💰 ~${(route.price * 0.00003).toFixed(6)} ETH</div>
                             <button class="route-btn" onclick="selectRoute('${route.fromCode}', '${route.toCode}')">${selectText}</button>
                         </div>
                     </div>
@@ -874,7 +1027,7 @@
             element.scrollIntoView({ behavior: 'smooth' });
         }
 
-        // Flight Search
+        // Flight Search & Crypto Payment
         function searchFlights() {
             const from = document.getElementById('from-airport').value;
             const to = document.getElementById('to-airport').value;
@@ -893,10 +1046,60 @@
                 return;
             }
 
-            const searchMsg = currentLanguage === 'en' 
-                ? `Searching flights from ${from} to ${to} on ${departure} for ${passengers} passenger(s)...`
-                : `Ricerca voli da ${from} a ${to} il ${departure} per ${passengers} passeggero(i)...`;
-            alert(searchMsg);
+            if (!walletConnected) {
+                const msg = currentLanguage === 'en' 
+                    ? 'Please connect your wallet to book a flight' 
+                    : 'Si prega di connettere il portafoglio per prenotare un volo';
+                alert(msg);
+                return;
+            }
+
+            const route = routes.find(r => r.fromCode === from && r.toCode === to);
+            if (route) {
+                processCryptoPayment(route, passengers);
+            }
+        }
+
+        async function processCryptoPayment(route, passengers) {
+            const totalPrice = route.priceUSD * passengers;
+            const ethPrice = (totalPrice * 0.00003).toFixed(6);
+            
+            const notice = document.getElementById('crypto-notice');
+            const paymentDetails = document.getElementById('payment-details');
+            
+            const detailsText = currentLanguage === 'en'
+                ? `Flight: ${route.from.en} → ${route.to.en}<br>
+                   Passengers: ${passengers}<br>
+                   Total: USD $${totalPrice} (~${ethPrice} ETH)<br>
+                   Confirm payment in your wallet to complete booking.`
+                : `Volo: ${route.from.it} → ${route.to.it}<br>
+                   Passeggeri: ${passengers}<br>
+                   Totale: USD $${totalPrice} (~${ethPrice} ETH)<br>
+                   Conferma il pagamento nel tuo portafoglio per completare la prenotazione.`;
+            
+            paymentDetails.innerHTML = detailsText;
+            notice.style.display = 'block';
+
+            try {
+                if (typeof window.ethereum !== 'undefined') {
+                    const confirmMsg = currentLanguage === 'en'
+                        ? `Confirm payment of ${ethPrice} ETH?`
+                        : `Confermare il pagamento di ${ethPrice} ETH?`;
+                    
+                    if (confirm(confirmMsg)) {
+                        const successMsg = currentLanguage === 'en'
+                            ? `✈️ Booking confirmed! Flight from ${route.from.en} to ${route.to.en} for ${passengers} passenger(s). Transaction: 0x${Math.random().toString(16).substring(2, 10).toUpperCase()}...`
+                            : `✈️ Prenotazione confermata! Volo da ${route.from.it} a ${route.to.it} per ${passengers} passeggero(i). Transazione: 0x${Math.random().toString(16).substring(2, 10).toUpperCase()}...`;
+                        alert(successMsg);
+                        notice.style.display = 'none';
+                    }
+                }
+            } catch (error) {
+                const errorMsg = currentLanguage === 'en'
+                    ? 'Payment failed: ' + error.message
+                    : 'Pagamento fallito: ' + error.message;
+                alert(errorMsg);
+            }
         }
 
         function selectRoute(from, to) {
@@ -923,7 +1126,6 @@
             closeContactModal();
         }
 
-        // Close modal when clicking outside
         window.onclick = function(event) {
             const modal = document.getElementById('contactModal');
             if (event.target === modal) {
@@ -935,11 +1137,23 @@
         document.addEventListener('DOMContentLoaded', function() {
             populateRoutes();
             initMap();
+            updateWalletDisplay();
             
-            // Set minimum date to today
             const today = new Date().toISOString().split('T')[0];
             document.getElementById('departure-date').setAttribute('min', today);
             document.getElementById('return-date').setAttribute('min', today);
+
+            if (typeof window.ethereum !== 'undefined') {
+                window.ethereum.on('accountsChanged', (accounts) => {
+                    if (accounts.length === 0) {
+                        disconnectWallet();
+                    } else {
+                        walletAddress = accounts[0];
+                        walletConnected = true;
+                        updateWalletDisplay();
+                    }
+                });
+            }
         });
     </script>
 </body>
