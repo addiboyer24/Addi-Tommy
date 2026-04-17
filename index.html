@@ -527,7 +527,7 @@
             margin-bottom: 1rem;
         }
 
-        /* Payment SPA Styles */
+        /* Payment SPA Styles - PayPal-inspired */
         body.payment-active {
             overflow: hidden;
         }
@@ -547,7 +547,7 @@
             left: 0;
             width: 100%;
             height: 100%;
-            background: linear-gradient(135deg, #f5f5f5 0%, white 100%);
+            background: white;
             z-index: 2000;
             overflow-y: auto;
             animation: slideInFromBottom 0.4s ease-out;
@@ -565,29 +565,41 @@
         }
 
         .payment-spa-container {
-            max-width: 600px;
+            width: 100%;
+            max-width: 500px;
             margin: 0 auto;
-            padding: 2rem 1rem;
+            padding: 1rem;
             min-height: 100vh;
             display: flex;
             flex-direction: column;
-            justify-content: center;
         }
 
         .payment-spa-header {
             display: flex;
             align-items: center;
-            margin-bottom: 2rem;
-            gap: 1rem;
+            justify-content: space-between;
+            padding: 1rem 0;
+            margin-bottom: 1.5rem;
+            border-bottom: 1px solid #e5e7eb;
+            position: sticky;
+            top: 0;
+            background: white;
+            z-index: 10;
         }
 
         .payment-spa-back {
             background: none;
             border: none;
-            font-size: 1.5rem;
+            font-size: 1.25rem;
             cursor: pointer;
             color: var(--text-dark);
             transition: color 0.3s;
+            padding: 0.5rem;
+            min-width: 44px;
+            min-height: 44px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
 
         .payment-spa-back:hover {
@@ -595,17 +607,18 @@
         }
 
         .payment-spa-title {
-            flex: 1;
             margin: 0;
-            font-size: 1.5rem;
-            color: var(--primary-color);
+            font-size: 1.25rem;
+            color: var(--text-dark);
             font-weight: bold;
+            text-align: center;
+            flex: 1;
         }
 
         .payment-spa-subtitle {
             color: var(--text-light);
-            font-size: 0.9rem;
-            margin-top: 0.5rem;
+            font-size: 0.85rem;
+            margin-top: 0.25rem;
         }
 
         .payment-spa-close {
@@ -615,23 +628,81 @@
             cursor: pointer;
             color: var(--text-light);
             transition: color 0.3s;
+            padding: 0.5rem;
+            min-width: 44px;
+            min-height: 44px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
 
         .payment-spa-close:hover {
             color: var(--text-dark);
         }
 
-        .payment-screen {
-            animation: fadeIn 0.3s ease-in;
+        /* Progress Indicator */
+        .payment-progress {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 2rem;
+            align-items: center;
         }
 
-        @keyframes fadeIn {
-            from {
-                opacity: 0;
-            }
-            to {
-                opacity: 1;
-            }
+        .progress-step {
+            flex: 1;
+            text-align: center;
+            position: relative;
+        }
+
+        .progress-step::after {
+            content: '';
+            position: absolute;
+            top: 20px;
+            left: 50%;
+            width: 100%;
+            height: 2px;
+            background: #e5e7eb;
+            z-index: -1;
+        }
+
+        .progress-step:last-child::after {
+            display: none;
+        }
+
+        .progress-number {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 40px;
+            height: 40px;
+            background: #e5e7eb;
+            border-radius: 50%;
+            font-weight: bold;
+            color: #666;
+            margin-bottom: 0.5rem;
+            font-size: 0.95rem;
+        }
+
+        .progress-step.active .progress-number {
+            background: var(--primary-color);
+            color: white;
+        }
+
+        .progress-step.completed .progress-number {
+            background: var(--crypto-green);
+            color: white;
+        }
+
+        .progress-label {
+            font-size: 0.75rem;
+            color: #666;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .progress-step.active .progress-label {
+            color: var(--primary-color);
         }
 
         .payment-modal-content {
@@ -645,69 +716,177 @@
             overflow-y: visible;
         }
 
-        .payment-header {
-            display: none;
+        /* Payment Step Sections */
+        .payment-step-section {
+            background: white;
+            border-radius: 8px;
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+            border: 1px solid #e5e7eb;
+            animation: fadeIn 0.3s ease-in;
         }
 
-        .payment-header h2 {
-            color: var(--primary-color);
-            margin-bottom: 0.5rem;
-            font-size: 1.5rem;
-        }
-
-        .flight-details {
-            background: var(--light-bg);
-            padding: 1rem;
-            border-radius: 5px;
-            margin-bottom: 1rem;
-            font-size: 0.9rem;
-        }
-
-        .flight-details p {
-            margin-bottom: 0.5rem;
-        }
-
-        .payment-form-group {
-            margin-bottom: 1rem;
-        }
-
-        .payment-form-group label {
-            display: block;
-            margin-bottom: 0.5rem;
-            font-weight: 600;
+        .payment-step-section h3 {
             color: var(--text-dark);
-            font-size: 0.9rem;
+            font-size: 1rem;
+            margin-bottom: 1rem;
+            font-weight: 600;
         }
 
-        .payment-form-group input {
+        .payment-detail-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0.75rem 0;
+            border-bottom: 1px solid #f0f0f0;
+            font-size: 0.95rem;
+        }
+
+        .payment-detail-row:last-child {
+            border-bottom: none;
+        }
+
+        .payment-detail-label {
+            color: var(--text-light);
+            font-weight: 500;
+        }
+
+        .payment-detail-value {
+            color: var(--text-dark);
+            font-weight: 600;
+        }
+
+        /* Flight Info Card - Mobile Optimized */
+        .flight-info-card {
+            background: linear-gradient(135deg, var(--primary-color) 0%, #004499 100%);
+            color: white;
+            border-radius: 8px;
+            padding: 1.25rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .flight-route {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 1rem;
+        }
+
+        .flight-city {
+            display: flex;
+            flex-direction: column;
+            font-size: 1.1rem;
+            font-weight: 600;
+        }
+
+        .flight-arrow {
+            font-size: 1.5rem;
+            margin: 0 1rem;
+            opacity: 0.8;
+        }
+
+        .flight-details-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+            padding-top: 1rem;
+            border-top: 1px solid rgba(255,255,255,0.2);
+            font-size: 0.85rem;
+        }
+
+        .flight-detail-item {
+            display: flex;
+            flex-direction: column;
+            gap: 0.25rem;
+        }
+
+        .flight-detail-item strong {
+            font-size: 1.1rem;
+        }
+
+        /* Summary Card */
+        .payment-summary {
+            background: #f0f9ff;
+            border: 2px solid var(--primary-color);
+            padding: 1.25rem;
+            border-radius: 8px;
+            margin-bottom: 1.5rem;
+        }
+
+        .payment-summary-row {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 0.75rem;
+            font-size: 0.95rem;
+        }
+
+        .payment-summary-row.total {
+            border-top: 1px solid var(--primary-color);
+            padding-top: 0.75rem;
+            font-weight: 700;
+            color: var(--crypto-green);
+            font-size: 1.1rem;
+        }
+
+        /* Mobile Friendly Buttons */
+        .payment-btn-group {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+            margin-top: 1.5rem;
+        }
+
+        .btn-payment {
             width: 100%;
-            padding: 0.75rem;
-            border: 2px solid #ddd;
-            border-radius: 5px;
-            font-size: 0.9rem;
-            font-family: 'Courier New', monospace;
-            transition: border-color 0.3s;
+            padding: 1rem;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 1rem;
+            transition: all 0.3s;
+            min-height: 50px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
         }
 
-        .payment-form-group input:disabled {
-            background-color: #f0f0f0;
+        .btn-payment:disabled {
+            opacity: 0.6;
             cursor: not-allowed;
-            color: #666;
         }
 
-        .payment-form-group input:not(:disabled):focus {
-            outline: none;
-            border-color: var(--primary-color);
+        .btn-pay {
+            background: var(--crypto-green);
+            color: white;
         }
 
+        .btn-pay:hover:not(:disabled) {
+            background: #059669;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
+        }
+
+        .btn-secondary {
+            background: #f0f0f0;
+            color: var(--text-dark);
+        }
+
+        .btn-secondary:hover {
+            background: #e5e7eb;
+        }
+
+        /* Wallet Connection Notice */
         .wallet-connection-notice {
             background: #fef3c7;
             border: 2px solid #fbbf24;
             color: #92400e;
             padding: 1rem;
-            border-radius: 5px;
-            margin-bottom: 1rem;
+            border-radius: 8px;
+            margin-bottom: 1.5rem;
             text-align: center;
+            font-size: 0.95rem;
         }
 
         .wallet-connection-notice.success {
@@ -716,88 +895,37 @@
             color: #065f46;
         }
 
+        .wallet-connection-notice p {
+            margin: 0;
+        }
+
+        .wallet-address-display {
+            font-family: 'Courier New', monospace;
+            font-size: 0.85rem;
+            margin-top: 0.5rem;
+            word-break: break-all;
+        }
+
         .connect-wallet-modal-btn {
             width: 100%;
             background: var(--crypto-green);
             color: white;
             border: none;
-            padding: 0.75rem;
-            border-radius: 5px;
+            padding: 1rem;
+            border-radius: 8px;
             cursor: pointer;
-            font-weight: bold;
+            font-weight: 600;
             margin-bottom: 1rem;
             transition: background 0.3s;
             font-size: 1rem;
+            min-height: 50px;
         }
 
         .connect-wallet-modal-btn:hover {
             background: #059669;
         }
 
-        .payment-summary {
-            background: #f0f9ff;
-            border: 1px solid var(--primary-color);
-            padding: 1rem;
-            border-radius: 5px;
-            margin-bottom: 1rem;
-        }
-
-        .payment-summary-row {
-            display: flex;
-            justify-content: space-between;
-            margin-bottom: 0.5rem;
-            font-size: 0.9rem;
-        }
-
-        .payment-summary-row.total {
-            border-top: 1px solid var(--primary-color);
-            padding-top: 0.5rem;
-            font-weight: bold;
-            color: var(--crypto-green);
-            font-size: 1rem;
-        }
-
-        .payment-actions {
-            display: flex;
-            gap: 1rem;
-        }
-
-        .payment-actions button {
-            flex: 1;
-            padding: 0.75rem;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-            font-weight: bold;
-            font-size: 0.9rem;
-            transition: all 0.3s;
-        }
-
-        .payment-actions .btn-pay {
-            background: var(--crypto-green);
-            color: white;
-        }
-
-        .payment-actions .btn-pay:hover:not(:disabled) {
-            background: #059669;
-            transform: translateY(-2px);
-        }
-
-        .payment-actions .btn-pay:disabled {
-            background: #ccc;
-            cursor: not-allowed;
-        }
-
-        .payment-actions .btn-cancel {
-            background: #e5e7eb;
-            color: var(--text-dark);
-        }
-
-        .payment-actions .btn-cancel:hover {
-            background: #d1d5db;
-        }
-
-        /* Confirmation Screen Styles */
+        /* Confirmation Screen Styles - Mobile Optimized */
         .payment-confirmation-screen {
             display: none;
         }
@@ -806,23 +934,29 @@
             background: linear-gradient(135deg, var(--crypto-green) 0%, #059669 100%);
             color: white;
             padding: 1.5rem;
-            border-radius: 10px;
+            border-radius: 8px;
             margin-bottom: 1.5rem;
             text-align: center;
         }
 
         .confirmation-header h3 {
             margin: 0;
-            font-size: 1.3rem;
+            font-size: 1.1rem;
+            font-weight: 600;
+        }
+
+        .confirmation-header p {
+            margin-top: 0.5rem;
+            font-size: 0.85rem;
+            opacity: 0.95;
         }
 
         .address-box {
-            background: var(--light-bg);
-            border: 2px solid #ddd;
+            background: white;
+            border: 1px solid #e5e7eb;
             border-radius: 8px;
             padding: 1rem;
             margin-bottom: 1rem;
-            font-size: 0.85rem;
         }
 
         .address-box-label {
@@ -830,17 +964,19 @@
             font-weight: 600;
             margin-bottom: 0.5rem;
             display: block;
+            font-size: 0.85rem;
         }
 
         .address-box-value {
-            background: white;
+            background: #f9fafb;
             padding: 0.75rem;
-            border-radius: 5px;
-            border: 1px solid #ddd;
+            border-radius: 6px;
+            border: 1px solid #f0f0f0;
             font-family: 'Courier New', monospace;
             word-break: break-all;
-            font-size: 0.8rem;
+            font-size: 0.75rem;
             color: var(--primary-color);
+            line-height: 1.4;
         }
 
         .confirmation-summary {
@@ -852,15 +988,25 @@
         }
 
         .confirmation-summary p {
-            margin-bottom: 0.5rem;
-            font-size: 0.9rem;
+            margin-bottom: 0.75rem;
+            font-size: 0.95rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
         }
 
         .confirmation-summary strong {
-            color: var(--primary-color);
+            color: var(--text-light);
+            font-weight: 500;
         }
 
-        /* Slider Button Styles */
+        .confirmation-amount-highlight {
+            color: var(--crypto-green);
+            font-size: 1.25rem;
+            font-weight: 700;
+        }
+
+        /* Slider Button - Mobile Friendly */
         .slider-button-container {
             margin-top: 1.5rem;
             margin-bottom: 1rem;
@@ -868,10 +1014,10 @@
 
         .slider-button {
             width: 100%;
-            height: 60px;
+            height: 56px;
             background: linear-gradient(90deg, #e5e7eb 0%, #d1d5db 100%);
             border: 2px solid #9ca3af;
-            border-radius: 30px;
+            border-radius: 8px;
             cursor: pointer;
             position: relative;
             overflow: hidden;
@@ -879,9 +1025,10 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            font-weight: bold;
+            font-weight: 600;
             color: #666;
-            font-size: 0.9rem;
+            font-size: 0.95rem;
+            touch-action: manipulation;
         }
 
         .slider-button.ready {
@@ -892,17 +1039,18 @@
 
         .slider-thumb {
             position: absolute;
-            left: 2px;
-            width: 56px;
-            height: 56px;
+            left: 3px;
+            width: 50px;
+            height: 50px;
             background: white;
-            border-radius: 28px;
+            border-radius: 6px;
             box-shadow: 0 2px 8px rgba(0,0,0,0.2);
             transition: left 0.3s ease;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 1.2rem;
+            font-size: 1.25rem;
+            font-weight: bold;
         }
 
         .slider-button.ready .slider-thumb {
@@ -911,7 +1059,7 @@
         }
 
         .slider-button.active .slider-thumb {
-            left: calc(100% - 58px);
+            left: calc(100% - 53px);
         }
 
         .slider-text {
@@ -923,27 +1071,42 @@
 
         .confirmation-actions {
             display: flex;
+            flex-direction: column;
             gap: 1rem;
         }
 
         .confirmation-actions button {
-            flex: 1;
-            padding: 0.75rem;
+            width: 100%;
+            padding: 1rem;
             border: none;
-            border-radius: 5px;
+            border-radius: 8px;
             cursor: pointer;
-            font-weight: bold;
-            font-size: 0.9rem;
+            font-weight: 600;
+            font-size: 1rem;
             transition: all 0.3s;
+            min-height: 50px;
         }
 
         .btn-back {
-            background: #e5e7eb;
+            background: #f0f0f0;
             color: var(--text-dark);
         }
 
         .btn-back:hover {
-            background: #d1d5db;
+            background: #e5e7eb;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+            }
+            to {
+                opacity: 1;
+            }
+        }
+
+        .payment-step-section {
+            animation: fadeIn 0.3s ease-in;
         }
 
         /* Responsive Design */
@@ -1000,10 +1163,195 @@
                 grid-template-columns: 1fr;
             }
 
+            /* Mobile Payment SPA */
+            .payment-spa-container {
+                padding: 1rem;
+                max-width: 100%;
+                min-height: 100vh;
+            }
+
+            .payment-spa-header {
+                padding: 0.75rem 0;
+                margin-bottom: 1rem;
+            }
+
+            .payment-spa-title {
+                font-size: 1.15rem;
+            }
+
             .payment-modal-content {
-                margin: 5% 1rem;
+                margin: 0;
                 max-width: none;
-                max-height: 90vh;
+                max-height: none;
+                padding: 0;
+            }
+
+            .payment-progress {
+                margin-bottom: 1.5rem;
+                gap: 0;
+            }
+
+            .progress-step {
+                flex: 1;
+            }
+
+            .progress-number {
+                width: 36px;
+                height: 36px;
+                font-size: 0.85rem;
+                margin-bottom: 0.25rem;
+            }
+
+            .progress-label {
+                font-size: 0.65rem;
+            }
+
+            .flight-info-card {
+                padding: 1rem;
+                margin-bottom: 1.5rem;
+            }
+
+            .flight-route {
+                margin-bottom: 0.75rem;
+            }
+
+            .flight-city {
+                font-size: 1rem;
+            }
+
+            .flight-arrow {
+                font-size: 1.25rem;
+                margin: 0 0.5rem;
+            }
+
+            .flight-details-grid {
+                gap: 0.75rem;
+                padding-top: 0.75rem;
+                font-size: 0.8rem;
+            }
+
+            .flight-detail-item strong {
+                font-size: 1rem;
+            }
+
+            .payment-step-section {
+                padding: 1rem;
+                margin-bottom: 1rem;
+                border-radius: 6px;
+            }
+
+            .payment-step-section h3 {
+                font-size: 0.95rem;
+                margin-bottom: 0.75rem;
+            }
+
+            .payment-summary {
+                padding: 1rem;
+                margin-bottom: 1.5rem;
+                border-radius: 6px;
+            }
+
+            .payment-summary-row {
+                font-size: 0.85rem;
+                margin-bottom: 0.5rem;
+                padding-bottom: 0.5rem;
+            }
+
+            .payment-summary-row.total {
+                font-size: 1rem;
+                padding-top: 0.5rem;
+                margin-bottom: 0;
+            }
+
+            .address-box-value {
+                font-size: 0.7rem;
+                padding: 0.5rem;
+            }
+
+            .confirmation-amount-highlight {
+                font-size: 1.1rem;
+            }
+
+            .slider-button {
+                height: 50px;
+                font-size: 0.85rem;
+                border-radius: 6px;
+            }
+
+            .slider-thumb {
+                width: 46px;
+                height: 46px;
+                font-size: 1.1rem;
+            }
+
+            .slider-button.active .slider-thumb {
+                left: calc(100% - 48px);
+            }
+
+            .btn-payment {
+                min-height: 46px;
+                font-size: 0.95rem;
+                padding: 0.85rem;
+            }
+
+            .wallet-connection-notice {
+                padding: 0.75rem;
+                font-size: 0.85rem;
+                margin-bottom: 1rem;
+            }
+
+            .wallet-address-display {
+                font-size: 0.75rem;
+            }
+
+            .confirmation-header {
+                padding: 1rem;
+                margin-bottom: 1.25rem;
+            }
+
+            .confirmation-header h3 {
+                font-size: 1rem;
+            }
+
+            .confirmation-header p {
+                font-size: 0.8rem;
+            }
+
+            .payment-btn-group {
+                gap: 0.75rem;
+                margin-top: 1rem;
+            }
+
+            .address-box {
+                padding: 0.75rem;
+                margin-bottom: 0.75rem;
+            }
+
+            .address-box-label {
+                font-size: 0.75rem;
+                margin-bottom: 0.25rem;
+            }
+
+            .confirmation-summary {
+                padding: 0.75rem;
+                margin-bottom: 1.25rem;
+            }
+
+            .confirmation-summary p {
+                font-size: 0.85rem;
+                margin-bottom: 0.5rem;
+            }
+
+            .payment-detail-row {
+                padding: 0.5rem 0;
+            }
+
+            .payment-detail-label {
+                font-size: 0.85rem;
+            }
+
+            .payment-detail-value {
+                font-size: 0.85rem;
             }
         }
     </style>
@@ -1211,95 +1559,159 @@
     <!-- Payment SPA -->
     <div id="paymentSPA">
         <div class="payment-spa-container">
+            <!-- Header -->
             <div class="payment-spa-header">
                 <button class="payment-spa-back" onclick="backFromPaymentSPA()" id="spa-back-btn" style="display: none;">←</button>
-                <div>
+                <div style="flex: 1;">
                     <h1 class="payment-spa-title" id="spa-title" data-en="Payment" data-it="Pagamento">Payment</h1>
-                    <p class="payment-spa-subtitle" id="spa-subtitle" data-en="Complete your flight booking with cryptocurrency" data-it="Completa la tua prenotazione di volo con criptovaluta">Complete your flight booking with cryptocurrency</p>
                 </div>
-                <button class="payment-spa-close" onclick="closePaymentSPA()" data-en="Close" data-it="Chiudi">✕</button>
+                <button class="payment-spa-close" onclick="closePaymentSPA()">✕</button>
             </div>
 
-        <div class="payment-modal-content">
-            <div class="payment-header">
-                <h2 data-en="💳 Crypto Payment" data-it="💳 Pagamento Cripto">💳 Crypto Payment</h2>
-                <p style="color: var(--text-light); font-size: 0.9rem;" data-en="Complete your flight booking with cryptocurrency" data-it="Completa la tua prenotazione di volo con criptovaluta">Complete your flight booking with cryptocurrency</p>
-            </div>
-
-            <div id="flight-details-payment" class="flight-details"></div>
-
-            <div id="wallet-connection-section"></div>
-
-            <div id="payment-form-section" style="display: none;">
-                <div class="payment-form-group">
-                    <label data-en="Recipient Address" data-it="Indirizzo Destinatario">Recipient Address</label>
-                    <input type="text" id="recipient-address" value="0x834F4FE6A07a9C8C67846Bb435D413e6033cd5cf" disabled>
-                    <small style="color: var(--text-light); margin-top: 0.25rem; display: block;" data-en="Addi & Tommy Airlines" data-it="Addi & Tommy Airlines">Addi & Tommy Airlines</small>
+            <!-- Progress Indicator -->
+            <div class="payment-progress" id="payment-progress">
+                <div class="progress-step active" id="progress-1">
+                    <div class="progress-number">1</div>
+                    <div class="progress-label" data-en="Review" data-it="Revisione">Review</div>
                 </div>
-
-                <div class="payment-form-group">
-                    <label data-en="Amount to Send" data-it="Importo da Inviare">Amount to Send</label>
-                    <input type="text" id="amount-to-send" disabled>
+                <div class="progress-step" id="progress-2">
+                    <div class="progress-number">2</div>
+                    <div class="progress-label" data-en="Wallet" data-it="Portafoglio">Wallet</div>
                 </div>
-
-                <div class="payment-summary">
-                    <div class="payment-summary-row">
-                        <span data-en="Flight Cost:" data-it="Costo Volo:">Flight Cost:</span>
-                        <span id="flight-cost-display">0 ETH</span>
-                    </div>
-                    <div class="payment-summary-row">
-                        <span data-en="Gas Fee (estimate):" data-it="Commissione Gas (stima):">Gas Fee (estimate):</span>
-                        <span id="gas-fee-display">0.001 ETH</span>
-                    </div>
-                    <div class="payment-summary-row total">
-                        <span data-en="Total:" data-it="Totale:">Total:</span>
-                        <span id="total-amount-display">0 ETH</span>
-                    </div>
+                <div class="progress-step" id="progress-3">
+                    <div class="progress-number">3</div>
+                    <div class="progress-label" data-en="Details" data-it="Dettagli">Details</div>
                 </div>
-
-                <div class="payment-actions">
-                    <button class="btn-pay" onclick="proceedToConfirmation()" id="pay-btn" data-en="Pay Now" data-it="Paga Ora">Pay Now</button>
-                    <button class="btn-cancel" onclick="closePaymentModal()" data-en="Cancel" data-it="Annulla">Cancel</button>
+                <div class="progress-step" id="progress-4">
+                    <div class="progress-number">4</div>
+                    <div class="progress-label" data-en="Confirm" data-it="Conferma">Confirm</div>
                 </div>
             </div>
 
-            <!-- Payment Confirmation Screen -->
-            <div class="payment-confirmation-screen" id="payment-confirmation-screen">
-                <div class="confirmation-header">
-                    <h3 data-en="Confirm Payment" data-it="Conferma Pagamento">Confirm Payment</h3>
-                    <p style="margin-top: 0.5rem; font-size: 0.9rem;" data-en="Review your payment details and slide to confirm" data-it="Rivedi i dettagli del pagamento e scorri per confermare">Review your payment details and slide to confirm</p>
-                </div>
-
-                <div>
-                    <div class="address-box">
-                        <span class="address-box-label" data-en="Your Wallet Address" data-it="Il Tuo Indirizzo Portafoglio">Your Wallet Address</span>
-                        <div class="address-box-value" id="confirmation-from-address">---</div>
+            <div class="payment-modal-content">
+                <!-- Step 1: Review Order -->
+                <div id="payment-step-1" style="display: block;">
+                    <div class="flight-info-card">
+                        <div class="flight-route">
+                            <div class="flight-city">
+                                <span id="step1-from">---</span>
+                            </div>
+                            <div class="flight-arrow">→</div>
+                            <div class="flight-city">
+                                <span id="step1-to">---</span>
+                            </div>
+                        </div>
+                        <div class="flight-details-grid">
+                            <div class="flight-detail-item">
+                                <strong id="step1-passengers">1</strong>
+                                <span data-en="Passenger" data-it="Passeggero">Passenger</span>
+                            </div>
+                            <div class="flight-detail-item">
+                                <strong id="step1-price">$0</strong>
+                                <span data-en="Total" data-it="Totale">Total</span>
+                            </div>
+                        </div>
                     </div>
 
-                    <div class="address-box">
-                        <span class="address-box-label" data-en="Addi & Tommy Airlines" data-it="Addi & Tommy Airlines">Addi & Tommy Airlines</span>
-                        <div class="address-box-value">0x834F4FE6A07a9C8C67846Bb435D413e6033cd5cf</div>
+                    <div class="payment-summary">
+                        <div class="payment-summary-row">
+                            <span data-en="Subtotal:" data-it="Subtotale:">Subtotal:</span>
+                            <span id="step1-subtotal">$0</span>
+                        </div>
+                        <div class="payment-summary-row">
+                            <span data-en="Gas Fee:" data-it="Commissione Gas:">Gas Fee:</span>
+                            <span id="step1-gas">0.001 ETH</span>
+                        </div>
+                        <div class="payment-summary-row total">
+                            <span data-en="Total (ETH):" data-it="Totale (ETH):">Total (ETH):</span>
+                            <span id="step1-total-eth">0 ETH</span>
+                        </div>
                     </div>
 
-                    <div class="confirmation-summary">
-                        <p><strong data-en="Flight:" data-it="Volo:">Flight:</strong> <span id="confirmation-flight">---</span></p>
-                        <p><strong data-en="Passengers:" data-it="Passeggeri:">Passengers:</strong> <span id="confirmation-passengers">---</span></p>
-                        <p><strong data-en="Amount to Send:" data-it="Importo da Inviare:">Amount to Send:</strong> <span id="confirmation-amount" style="color: var(--crypto-green); font-size: 1.1rem;">---</span></p>
+                    <div class="payment-btn-group">
+                        <button class="btn-payment btn-pay" onclick="goToStep(2)" data-en="Continue" data-it="Continua">Continue</button>
+                        <button class="btn-payment btn-secondary" onclick="closePaymentModal()" data-en="Cancel Order" data-it="Annulla Ordine">Cancel Order</button>
                     </div>
                 </div>
 
-                <div class="slider-button-container">
-                    <div class="slider-button ready" id="slider-button" onclick="handleSliderClick(event)">
-                        <div class="slider-thumb">→</div>
-                        <div class="slider-text" data-en="Slide to Confirm" data-it="Scorri per Confermare">Slide to Confirm</div>
+                <!-- Step 2: Wallet Connection -->
+                <div id="payment-step-2" style="display: none;">
+                    <div class="payment-step-section">
+                        <h3 data-en="Connect Your Wallet" data-it="Connetti il Tuo Portafoglio">Connect Your Wallet</h3>
+                        <p style="color: var(--text-light); font-size: 0.9rem; margin-bottom: 1rem;" data-en="Select a Web3 wallet to complete your payment securely" data-it="Seleziona un portafoglio Web3 per completare il pagamento in modo sicuro">Select a Web3 wallet to complete your payment securely</p>
+                        <div id="wallet-connection-section"></div>
+                    </div>
+
+                    <div class="payment-btn-group">
+                        <button class="btn-payment btn-secondary" onclick="goToStep(1)" data-en="Back" data-it="Indietro">Back</button>
                     </div>
                 </div>
 
-                <div class="confirmation-actions">
-                    <button class="btn-back" onclick="backToPaymentForm()" data-en="Back" data-it="Indietro">Back</button>
+                <!-- Step 3: Payment Details -->
+                <div id="payment-step-3" style="display: none;">
+                    <div class="payment-step-section">
+                        <h3 data-en="Payment Details" data-it="Dettagli Pagamento">Payment Details</h3>
+                        
+                        <div style="margin-bottom: 1.5rem;">
+                            <label style="display: block; color: var(--text-light); font-size: 0.85rem; margin-bottom: 0.5rem; font-weight: 500;" data-en="From Your Wallet" data-it="Dal Tuo Portafoglio">From Your Wallet</label>
+                            <div class="address-box-value" id="step3-from-wallet">0x000...000</div>
+                        </div>
+
+                        <div style="margin-bottom: 1.5rem;">
+                            <label style="display: block; color: var(--text-light); font-size: 0.85rem; margin-bottom: 0.5rem; font-weight: 500;" data-en="To Addi & Tommy Airlines" data-it="A Addi & Tommy Airlines">To Addi & Tommy Airlines</label>
+                            <div class="address-box-value">0x834F4FE6A07a9C8C67846Bb435D413e6033cd5cf</div>
+                        </div>
+                    </div>
+
+                    <div class="confirmation-summary" style="margin-top: 1.5rem;">
+                        <p>
+                            <strong data-en="Amount:" data-it="Importo:">Amount:</strong>
+                            <span class="confirmation-amount-highlight" id="step3-amount">0 ETH</span>
+                        </p>
+                    </div>
+
+                    <div class="payment-btn-group">
+                        <button class="btn-payment btn-pay" onclick="goToStep(4)" data-en="Review & Confirm" data-it="Rivedi e Conferma">Review & Confirm</button>
+                        <button class="btn-payment btn-secondary" onclick="goToStep(2)" data-en="Back" data-it="Indietro">Back</button>
+                    </div>
                 </div>
-            </div>
+
+                <!-- Step 4: Confirm & Pay -->
+                <div id="payment-step-4" style="display: none;">
+                    <div class="confirmation-header">
+                        <h3 data-en="Confirm Payment" data-it="Conferma Pagamento">Confirm Payment</h3>
+                        <p data-en="Slide to complete your booking" data-it="Scorri per completare la tua prenotazione">Slide to complete your booking</p>
+                    </div>
+
+                    <div class="payment-step-section">
+                        <h3 data-en="Order Summary" data-it="Riepilogo Ordine">Order Summary</h3>
+                        <div class="payment-detail-row">
+                            <span class="payment-detail-label" data-en="Flight:" data-it="Volo:">Flight:</span>
+                            <span class="payment-detail-value" id="step4-flight">---</span>
+                        </div>
+                        <div class="payment-detail-row">
+                            <span class="payment-detail-label" data-en="Passengers:" data-it="Passeggeri:">Passengers:</span>
+                            <span class="payment-detail-value" id="step4-passengers">1</span>
+                        </div>
+                        <div class="payment-detail-row">
+                            <span class="payment-detail-label" data-en="Amount:" data-it="Importo:">Amount:</span>
+                            <span class="payment-detail-value confirmation-amount-highlight" id="step4-amount">0 ETH</span>
+                        </div>
+                    </div>
+
+                    <div class="slider-button-container">
+                        <div class="slider-button ready" id="slider-button" onclick="handleSliderClick(event)">
+                            <div class="slider-thumb">→</div>
+                            <div class="slider-text" data-en="Slide to Confirm" data-it="Scorri per Confermare">Slide to Confirm</div>
+                        </div>
+                    </div>
+
+                    <div class="payment-btn-group">
+                        <button class="btn-payment btn-secondary" onclick="goToStep(3)" data-en="Back" data-it="Indietro">Back</button>
+                    </div>
+                </div>
         
+            </div>
         </div>
     </div>
 
@@ -1314,6 +1726,7 @@
         let currentLanguage = 'en';
         let currentRoute = null;
         let currentPassengers = 0;
+        let currentPaymentStep = 1;
 
         // Recipient address
         const RECIPIENT_ADDRESS = '0x834F4FE6A07a9C8C67846Bb435D413e6033cd5cf';
@@ -1401,7 +1814,111 @@
             'MXP': { lat: 45.6295, lng: 8.7281, name: { en: 'Milan', it: 'Milano' } }
         };
 
-        // WalletConnect Integration
+        // Payment Flow - Step Navigation
+        function goToStep(step) {
+            if (step === 2 && !currentRoute) {
+                const msg = currentLanguage === 'en' 
+                    ? 'No flight selected'
+                    : 'Nessun volo selezionato';
+                alert(msg);
+                return;
+            }
+
+            if (step === 3 && !walletConnected) {
+                const msg = currentLanguage === 'en' 
+                    ? 'Please connect your wallet first'
+                    : 'Si prega di connettere il portafoglio prima';
+                alert(msg);
+                return;
+            }
+
+            // Hide all steps
+            for (let i = 1; i <= 4; i++) {
+                document.getElementById(`payment-step-${i}`).style.display = 'none';
+                document.getElementById(`progress-${i}`).classList.remove('active', 'completed');
+            }
+
+            // Show current step and update progress
+            document.getElementById(`payment-step-${step}`).style.display = 'block';
+            
+            // Mark previous steps as completed
+            for (let i = 1; i < step; i++) {
+                document.getElementById(`progress-${i}`).classList.add('completed');
+            }
+            
+            // Mark current step as active
+            document.getElementById(`progress-${step}`).classList.add('active');
+
+            currentPaymentStep = step;
+
+            // Update step-specific data
+            if (step === 1) {
+                document.getElementById('spa-title').textContent = currentLanguage === 'en' ? 'Review Your Order' : 'Rivedi il Tuo Ordine';
+                updateStep1();
+                document.getElementById('spa-back-btn').style.display = 'none';
+            } else if (step === 2) {
+                document.getElementById('spa-title').textContent = currentLanguage === 'en' ? 'Connect Wallet' : 'Connetti Portafoglio';
+                updateStep2();
+                document.getElementById('spa-back-btn').style.display = 'flex';
+            } else if (step === 3) {
+                document.getElementById('spa-title').textContent = currentLanguage === 'en' ? 'Payment Details' : 'Dettagli Pagamento';
+                updateStep3();
+                document.getElementById('spa-back-btn').style.display = 'flex';
+            } else if (step === 4) {
+                document.getElementById('spa-title').textContent = currentLanguage === 'en' ? 'Confirm & Pay' : 'Conferma e Paga';
+                updateStep4();
+                document.getElementById('spa-back-btn').style.display = 'flex';
+            }
+        }
+
+        function updateStep1() {
+            if (!currentRoute) return;
+            
+            const totalPriceUSD = currentRoute.priceUSD * currentPassengers;
+            const ethPrice = (totalPriceUSD * 0.00003).toFixed(6);
+            const totalWithGas = (parseFloat(ethPrice) + GAS_FEE).toFixed(6);
+
+            const fromText = currentRoute.from[currentLanguage];
+            const toText = currentRoute.to[currentLanguage];
+
+            document.getElementById('step1-from').textContent = fromText;
+            document.getElementById('step1-to').textContent = toText;
+            document.getElementById('step1-passengers').textContent = currentPassengers;
+            document.getElementById('step1-price').textContent = `$${totalPriceUSD}`;
+            document.getElementById('step1-subtotal').textContent = `$${totalPriceUSD}`;
+            document.getElementById('step1-gas').textContent = `${GAS_FEE} ETH`;
+            document.getElementById('step1-total-eth').textContent = `${totalWithGas} ETH`;
+        }
+
+        function updateStep2() {
+            updatePaymentWalletSection();
+        }
+
+        function updateStep3() {
+            const totalPriceUSD = currentRoute.priceUSD * currentPassengers;
+            const ethPrice = (totalPriceUSD * 0.00003).toFixed(6);
+            const totalWithGas = (parseFloat(ethPrice) + GAS_FEE).toFixed(6);
+
+            document.getElementById('step3-from-wallet').textContent = walletAddress;
+            document.getElementById('step3-amount').textContent = `${totalWithGas} ETH`;
+        }
+
+        function updateStep4() {
+            const totalPriceUSD = currentRoute.priceUSD * currentPassengers;
+            const ethPrice = (totalPriceUSD * 0.00003).toFixed(6);
+            const totalWithGas = (parseFloat(ethPrice) + GAS_FEE).toFixed(6);
+
+            const flightText = currentLanguage === 'en'
+                ? `${currentRoute.from.en} → ${currentRoute.to.en}`
+                : `${currentRoute.from.it} → ${currentRoute.to.it}`;
+
+            document.getElementById('step4-flight').textContent = flightText;
+            document.getElementById('step4-passengers').textContent = currentPassengers;
+            document.getElementById('step4-amount').textContent = `${totalWithGas} ETH`;
+
+            // Reset slider
+            document.getElementById('slider-button').classList.remove('active');
+        }
         async function connectWallet() {
             try {
                 if (!walletConnected) {
@@ -1507,21 +2024,12 @@
             populateRoutes();
             updateWalletDisplay();
             
-            // Update SPA header if payment is active
+            // Update active payment step if payment is open
             if (document.body.classList.contains('payment-active')) {
-                const isByConfirmation = document.getElementById('payment-confirmation-screen').style.display === 'block';
-                if (isByConfirmation) {
-                    document.getElementById('spa-title').textContent = currentLanguage === 'en' ? 'Confirm Payment' : 'Conferma Pagamento';
-                    document.getElementById('spa-subtitle').textContent = currentLanguage === 'en' 
-                        ? 'Review your payment details and slide to confirm'
-                        : 'Rivedi i dettagli del pagamento e scorri per confermare';
-                } else {
-                    document.getElementById('spa-title').textContent = currentLanguage === 'en' ? 'Payment' : 'Pagamento';
-                    document.getElementById('spa-subtitle').textContent = currentLanguage === 'en' 
-                        ? 'Complete your flight booking with cryptocurrency'
-                        : 'Completa la tua prenotazione di volo con criptovaluta';
-                }
-                updateFlightDetailsDisplay();
+                updateStep1();
+                updateStep2();
+                updateStep3();
+                updateStep4();
             }
             
             if (document.getElementById('paymentSPA').style.display === 'block') {
@@ -1623,10 +2131,11 @@
         }
 
         function openPaymentModal() {
-            updateFlightDetailsDisplay();
+            if (!currentRoute) return;
             updatePaymentWalletSection();
             document.body.classList.add('payment-active');
             document.getElementById('paymentSPA').style.display = 'block';
+            goToStep(1);
         }
 
         function closePaymentModal() {
@@ -1634,6 +2143,7 @@
             document.getElementById('paymentSPA').style.display = 'none';
             currentRoute = null;
             currentPassengers = 0;
+            currentPaymentStep = 1;
         }
 
         function closePaymentSPA() {
@@ -1641,29 +2151,10 @@
         }
 
         function backFromPaymentSPA() {
-            backToPaymentForm();
-        }
-
-        function updateFlightDetailsDisplay() {
-            if (!currentRoute) return;
-
-            const totalPriceUSD = currentRoute.priceUSD * currentPassengers;
-            const ethPrice = (totalPriceUSD * 0.00003).toFixed(6);
-            const totalWithGas = (parseFloat(ethPrice) + GAS_FEE).toFixed(6);
-
-            const flightDetailsHtml = currentLanguage === 'en'
-                ? `<p><strong>Flight:</strong> ${currentRoute.from.en} → ${currentRoute.to.en}</p>
-                   <p><strong>Passengers:</strong> ${currentPassengers}</p>
-                   <p><strong>Total Cost:</strong> USD $${totalPriceUSD} (~${ethPrice} ETH)</p>`
-                : `<p><strong>Volo:</strong> ${currentRoute.from.it} → ${currentRoute.to.it}</p>
-                   <p><strong>Passeggeri:</strong> ${currentPassengers}</p>
-                   <p><strong>Costo Totale:</strong> USD $${totalPriceUSD} (~${ethPrice} ETH)</p>`;
-
-            document.getElementById('flight-details-payment').innerHTML = flightDetailsHtml;
-            document.getElementById('amount-to-send').value = ethPrice + ' ETH';
-            document.getElementById('flight-cost-display').textContent = ethPrice + ' ETH';
-            document.getElementById('gas-fee-display').textContent = GAS_FEE + ' ETH';
-            document.getElementById('total-amount-display').textContent = totalWithGas + ' ETH';
+            const previousStep = currentPaymentStep - 1;
+            if (previousStep >= 1) {
+                goToStep(previousStep);
+            }
         }
 
         function completePayment() {
