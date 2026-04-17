@@ -498,7 +498,7 @@
             top: 0;
             width: 100%;
             height: 100%;
-            background-color: rgba(0,0,0,0.5);
+            background-color: transparent;
         }
 
         .modal-content {
@@ -527,24 +527,126 @@
             margin-bottom: 1rem;
         }
 
-        /* Payment Modal Styles */
-        .payment-modal-content {
-            background-color: white;
-            margin: 2% auto;
-            padding: 2rem;
-            border-radius: 10px;
-            max-width: 550px;
-            max-height: 90vh;
+        /* Payment SPA Styles */
+        body.payment-active {
+            overflow: hidden;
+        }
+
+        body.payment-active > * {
+            display: none;
+        }
+
+        body.payment-active #paymentSPA {
+            display: block;
+        }
+
+        #paymentSPA {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, #f5f5f5 0%, white 100%);
+            z-index: 2000;
             overflow-y: auto;
-            box-shadow: 0 5px 30px rgba(0,0,0,0.4);
-            border: 2px solid var(--crypto-green);
+            animation: slideInFromBottom 0.4s ease-out;
+        }
+
+        @keyframes slideInFromBottom {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .payment-spa-container {
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 2rem 1rem;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        .payment-spa-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 2rem;
+            gap: 1rem;
+        }
+
+        .payment-spa-back {
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            cursor: pointer;
+            color: var(--text-dark);
+            transition: color 0.3s;
+        }
+
+        .payment-spa-back:hover {
+            color: var(--primary-color);
+        }
+
+        .payment-spa-title {
+            flex: 1;
+            margin: 0;
+            font-size: 1.5rem;
+            color: var(--primary-color);
+            font-weight: bold;
+        }
+
+        .payment-spa-subtitle {
+            color: var(--text-light);
+            font-size: 0.9rem;
+            margin-top: 0.5rem;
+        }
+
+        .payment-spa-close {
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            cursor: pointer;
+            color: var(--text-light);
+            transition: color 0.3s;
+        }
+
+        .payment-spa-close:hover {
+            color: var(--text-dark);
+        }
+
+        .payment-screen {
+            animation: fadeIn 0.3s ease-in;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+            }
+            to {
+                opacity: 1;
+            }
+        }
+
+        .payment-modal-content {
+            background-color: transparent;
+            padding: 0;
+            box-shadow: none;
+            border: none;
+            margin: 0;
+            max-width: none;
+            max-height: none;
+            overflow-y: visible;
         }
 
         .payment-header {
-            text-align: center;
-            margin-bottom: 1.5rem;
-            border-bottom: 2px solid var(--light-bg);
-            padding-bottom: 1rem;
+            display: none;
         }
 
         .payment-header h2 {
@@ -1106,10 +1208,19 @@
         </div>
     </div>
 
-    <!-- Payment Modal -->
-    <div id="paymentModal" class="modal">
+    <!-- Payment SPA -->
+    <div id="paymentSPA">
+        <div class="payment-spa-container">
+            <div class="payment-spa-header">
+                <button class="payment-spa-back" onclick="backFromPaymentSPA()" id="spa-back-btn" style="display: none;">←</button>
+                <div>
+                    <h1 class="payment-spa-title" id="spa-title" data-en="Payment" data-it="Pagamento">Payment</h1>
+                    <p class="payment-spa-subtitle" id="spa-subtitle" data-en="Complete your flight booking with cryptocurrency" data-it="Completa la tua prenotazione di volo con criptovaluta">Complete your flight booking with cryptocurrency</p>
+                </div>
+                <button class="payment-spa-close" onclick="closePaymentSPA()" data-en="Close" data-it="Chiudi">✕</button>
+            </div>
+
         <div class="payment-modal-content">
-            <span class="close" onclick="closePaymentModal()">&times;</span>
             <div class="payment-header">
                 <h2 data-en="💳 Crypto Payment" data-it="💳 Pagamento Cripto">💳 Crypto Payment</h2>
                 <p style="color: var(--text-light); font-size: 0.9rem;" data-en="Complete your flight booking with cryptocurrency" data-it="Completa la tua prenotazione di volo con criptovaluta">Complete your flight booking with cryptocurrency</p>
@@ -1395,9 +1506,26 @@
             });
             populateRoutes();
             updateWalletDisplay();
-            if (document.getElementById('paymentModal').style.display === 'block') {
-                updatePaymentWalletSection();
+            
+            // Update SPA header if payment is active
+            if (document.body.classList.contains('payment-active')) {
+                const isByConfirmation = document.getElementById('payment-confirmation-screen').style.display === 'block';
+                if (isByConfirmation) {
+                    document.getElementById('spa-title').textContent = currentLanguage === 'en' ? 'Confirm Payment' : 'Conferma Pagamento';
+                    document.getElementById('spa-subtitle').textContent = currentLanguage === 'en' 
+                        ? 'Review your payment details and slide to confirm'
+                        : 'Rivedi i dettagli del pagamento e scorri per confermare';
+                } else {
+                    document.getElementById('spa-title').textContent = currentLanguage === 'en' ? 'Payment' : 'Pagamento';
+                    document.getElementById('spa-subtitle').textContent = currentLanguage === 'en' 
+                        ? 'Complete your flight booking with cryptocurrency'
+                        : 'Completa la tua prenotazione di volo con criptovaluta';
+                }
                 updateFlightDetailsDisplay();
+            }
+            
+            if (document.getElementById('paymentSPA').style.display === 'block') {
+                updatePaymentWalletSection();
             }
         }
 
@@ -1497,13 +1625,23 @@
         function openPaymentModal() {
             updateFlightDetailsDisplay();
             updatePaymentWalletSection();
-            document.getElementById('paymentModal').style.display = 'block';
+            document.body.classList.add('payment-active');
+            document.getElementById('paymentSPA').style.display = 'block';
         }
 
         function closePaymentModal() {
-            document.getElementById('paymentModal').style.display = 'none';
+            document.body.classList.remove('payment-active');
+            document.getElementById('paymentSPA').style.display = 'none';
             currentRoute = null;
             currentPassengers = 0;
+        }
+
+        function closePaymentSPA() {
+            closePaymentModal();
+        }
+
+        function backFromPaymentSPA() {
+            backToPaymentForm();
         }
 
         function updateFlightDetailsDisplay() {
@@ -1589,6 +1727,13 @@
             // Reset slider
             document.getElementById('slider-button').classList.remove('active');
 
+            // Update SPA title and subtitle, show back button
+            document.getElementById('spa-title').textContent = currentLanguage === 'en' ? 'Confirm Payment' : 'Conferma Pagamento';
+            document.getElementById('spa-subtitle').textContent = currentLanguage === 'en' 
+                ? 'Review your payment details and slide to confirm'
+                : 'Rivedi i dettagli del pagamento e scorri per confermare';
+            document.getElementById('spa-back-btn').style.display = 'block';
+
             // Hide payment form, show confirmation
             document.getElementById('payment-form-section').style.display = 'none';
             document.getElementById('payment-confirmation-screen').style.display = 'block';
@@ -1598,6 +1743,13 @@
             document.getElementById('payment-confirmation-screen').style.display = 'none';
             document.getElementById('payment-form-section').style.display = 'block';
             document.getElementById('slider-button').classList.remove('active');
+            
+            // Update SPA title and subtitle, hide back button
+            document.getElementById('spa-title').textContent = currentLanguage === 'en' ? 'Payment' : 'Pagamento';
+            document.getElementById('spa-subtitle').textContent = currentLanguage === 'en' 
+                ? 'Complete your flight booking with cryptocurrency'
+                : 'Completa la tua prenotazione di volo con criptovaluta';
+            document.getElementById('spa-back-btn').style.display = 'none';
         }
 
         function handleSliderClick(event) {
@@ -1637,13 +1789,13 @@
 
         window.onclick = function(event) {
             const contactModal = document.getElementById('contactModal');
-            const paymentModal = document.getElementById('paymentModal');
+            const paymentSPA = document.getElementById('paymentSPA');
             
             if (event.target === contactModal) {
                 contactModal.style.display = 'none';
             }
-            if (event.target === paymentModal) {
-                paymentModal.style.display = 'none';
+            if (event.target === paymentSPA) {
+                closePaymentSPA();
             }
         }
 
