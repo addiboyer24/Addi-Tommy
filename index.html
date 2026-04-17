@@ -3236,14 +3236,6 @@
             const ethPrice = (totalPriceUSD * ETH_CONVERSION_RATE).toFixed(6);
             const totalWithGas = (parseFloat(ethPrice) + GAS_FEE).toFixed(6);
 
-            const confirmMsg = currentLanguage === 'en'
-                ? 'Confirm sending ' + totalWithGas + ' ETH to Addi & Tommy Airlines?\n\nFlight: ' + currentRoute.from.en + ' → ' + currentRoute.to.en + '\nPassengers: ' + currentPassengers + '\nFrom: ' + walletAddress
-                : 'Confermare l\'invio di ' + totalWithGas + ' ETH a Addi & Tommy Airlines?\n\nVolo: ' + currentRoute.from.it + ' → ' + currentRoute.to.it + '\nPasseggeri: ' + currentPassengers + '\nDa: ' + walletAddress;
-
-            if (!confirm(confirmMsg)) {
-                return;
-            }
-
             try {
                 showPaymentLoader();
                 
@@ -3252,19 +3244,17 @@
                 
                 console.log('Transaction confirmed:', txHash);
                 
-                const successMsg = currentLanguage === 'en'
-                    ? 'Booking confirmed! Flight: ' + currentRoute.from.en + ' → ' + currentRoute.to.en + ' | Passengers: ' + currentPassengers + ' | Amount: ' + totalWithGas + ' ETH | TX: ' + txHash
-                    : 'Prenotazione confermata! Volo: ' + currentRoute.from.it + ' → ' + currentRoute.to.it + ' | Passeggeri: ' + currentPassengers + ' | Importo: ' + totalWithGas + ' ETH | TX: ' + txHash;
-                
-                hidePaymentLoader();
-                showNotification(successMsg, 'success', currentLanguage === 'en' ? 'Booking Confirmed' : 'Prenotazione Confermata');
-                closePaymentModal();
-                
-                // Reset search form
-                document.getElementById('from-airport').value = '';
-                document.getElementById('to-airport').value = '';
-                document.getElementById('departure-date').value = '';
-                document.getElementById('passengers').value = '1';
+                // After brief delay to show completion, close modal
+                setTimeout(() => {
+                    hidePaymentLoader();
+                    closePaymentModal();
+                    
+                    // Reset search form
+                    document.getElementById('from-airport').value = '';
+                    document.getElementById('to-airport').value = '';
+                    document.getElementById('departure-date').value = '';
+                    document.getElementById('passengers').value = '1';
+                }, 1500);
                 
             } catch (error) {
                 hidePaymentLoader();
