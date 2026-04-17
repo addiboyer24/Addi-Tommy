@@ -2422,13 +2422,16 @@
                 console.log('Amount:', ethAmount, 'ETH');
 
                 // Get current gas price (with caching and timeout protection)
-                const gasPrice = await getGasPriceWithCache();
+                const gasPriceRaw = await getGasPriceWithCache();
+                
+                // Convert gasPrice to hex string for MetaMask compatibility
+                const gasPrice = web3.utils.toHex(gasPriceRaw);
                 
                 const txData = {
                     from: walletAddress,
                     to: toAddress,
                     value: web3.utils.toWei(ethAmount.toString(), 'ether'),
-                    gas: 21000,
+                    gas: web3.utils.toHex(21000),
                     gasPrice: gasPrice
                 };
 
