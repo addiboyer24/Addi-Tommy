@@ -2272,6 +2272,13 @@
         const GAS_FEE = 0.001; // Estimated gas fee in ETH
         const ETH_CONVERSION_RATE = 0.00003; // 1 USD = 0.00003 ETH
 
+        // Gas Price Caching - Prevents lag and timeout issues
+        let cachedGasPrice = null;
+        let gasPriceCacheTime = 0;
+        const GAS_PRICE_CACHE_DURATION = 30000; // 30 seconds
+        const GAS_PRICE_TIMEOUT = 5000; // 5 second timeout
+        const GAS_PRICE_FALLBACK = web3 ? web3.utils.toWei('50', 'gwei') : null;
+
         // Initialize Web3
         function initWeb3() {
             if (window.ethereum) {
@@ -2380,6 +2387,29 @@
             disconnectWallet();
         }
 
+        // Gas Price Caching Function - Reduces RPC calls and prevents timeout lag
+        async function getGasPriceWithCache() {
+            const now = Date.now();
+            if (cachedGasPrice && (now - gasPriceCacheTime) < GAS_PRICE_CACHE_DURATION) {
+                console.log('⚡ Using cached gas price');
+                return cachedGasPrice;
+            }
+            try {
+                const pricePromise = web3.eth.getGasPrice();
+                const timeoutPromise = new Promise((_, reject) => 
+                    setTimeout(() => reject(new Error('Gas price timeout')), GAS_PRICE_TIMEOUT)
+                );
+                const gasPrice = await Promise.race([pricePromise, timeoutPromise]);
+                cachedGasPrice = gasPrice;
+                gasPriceCacheTime = now;
+                console.log('📡 Gas price fetched:', gasPrice);
+                return gasPrice;
+            } catch (error) {
+                console.warn('⚠️ Gas price fetch failed, using fallback');
+                return GAS_PRICE_FALLBACK;
+            }
+        }
+
         // Payment Helper Functions
         async function sendPaymentTransaction(toAddress, ethAmount) {
             if (!walletConnected || !web3) {
@@ -2391,8 +2421,8 @@
                 console.log('To:', toAddress);
                 console.log('Amount:', ethAmount, 'ETH');
 
-                // Get current gas price
-                const gasPrice = await web3.eth.getGasPrice();
+                // Get current gas price (with caching and timeout protection)
+                const gasPrice = await getGasPriceWithCache();
                 
                 const txData = {
                     from: walletAddress,
@@ -3504,23 +3534,19 @@
         // Verify CAPTCHA answer
         function verifyCaptcha(selectedName) {
             if (currentCaptcha.answered) return;
-            
             currentCaptcha.answered = true;
+            
             const options = document.querySelectorAll('.image-captcha-option');
             
             if (selectedName === currentCaptcha.target) {
                 // Correct answer
-                const selectedElement = Array.from(options).find(opt => {
-                    const optionName = Object.values(captchaEmojis).find(e => {
-                        const emojiKey = Object.entries(captchaEmojis).find(([k, v]) => v.name === e.name && k === opt.textContent.trim());
-                        return emojiKey && emojiKey[1].name === selectedName;
-                    });
-                    return optionName;
+                options.forEach(opt => opt.classList.remove('selected'));
+                const correct = Array.from(options).find(opt => {
+                    const emojiData = Object.entries(captchaEmojis).find(([emoji, data]) => data.name === selectedName);
+                    return emojiData && opt.textContent.trim() === emojiData[0];
                 });
-
-                if (selectedElement) {
-                    selectedElement.classList.remove('selected');
-                    selectedElement.classList.add('correct');
+                if (correct) {
+                    correct.classList.add('correct');
                 }
 
                 showNotification(
@@ -3534,17 +3560,13 @@
                 }, 1000);
             } else {
                 // Incorrect answer
-                const selectedElement = Array.from(options).find(opt => {
-                    const optionName = Object.values(captchaEmojis).find(e => {
-                        const emojiKey = Object.entries(captchaEmojis).find(([k, v]) => v.name === e.name && k === opt.textContent.trim());
-                        return emojiKey && emojiKey[1].name === selectedName;
-                    });
-                    return optionName;
+                options.forEach(opt => opt.classList.remove('selected'));
+                const incorrect = Array.from(options).find(opt => {
+                    const emojiData = Object.entries(captchaEmojis).find(([emoji, data]) => data.name === selectedName);
+                    return emojiData && opt.textContent.trim() === emojiData[0];
                 });
-
-                if (selectedElement) {
-                    selectedElement.classList.remove('selected');
-                    selectedElement.classList.add('incorrect');
+                if (incorrect) {
+                    incorrect.classList.add('incorrect');
                 }
 
                 showNotification(
