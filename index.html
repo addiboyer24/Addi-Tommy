@@ -2251,12 +2251,11 @@
         async function connectWallet() {
             try {
                 console.log('connectWallet called, currently connected:', walletConnected);
-                console.log('Current state - walletConnected:', walletConnected, 'walletAddress:', walletAddress);
                 
                 if (!walletConnected) {
                     if (typeof window.ethereum !== 'undefined') {
                         console.log('Requesting wallet accounts...');
-                        showPaymentLoader(); // Show loader while connecting
+                        showPaymentLoader();
                         
                         const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
                         
@@ -2267,35 +2266,18 @@
                         walletAddress = accounts[0];
                         walletConnected = true;
                         
-                        console.log('✅ Wallet connected successfully!');
-                        console.log('Wallet address:', walletAddress);
-                        console.log('walletConnected flag:', walletConnected);
+                        console.log('✅ Wallet connected successfully! Address: ' + walletAddress);
                         
-                        // Small delay to ensure state is synchronized
                         await new Promise(resolve => setTimeout(resolve, 100));
                         
                         updateWalletDisplay();
-                        console.log('✅ Wallet display updated');
-                        
                         updatePaymentWalletSection();
-                        console.log('✅ Payment wallet section updated');
                         
-                        // Double-check state
-                        console.log('State after updates - walletConnected:', walletConnected, 'walletAddress:', walletAddress);
-                        
-                        const continueBtn = document.getElementById('wallet-continue-btn');
-                        if (continueBtn) {
-                            console.log('Continue button display:', continueBtn.style.display);
-                        } else {
-                            console.error('❌ Continue button element not found!');
-                        }
-                        
-                        // Hide loader after connection completes
                         hidePaymentLoader();
                         
                         const msg = currentLanguage === 'en' 
-                            ? `✅ Wallet connected: ${walletAddress.substring(0, 6)}...${walletAddress.substring(38)}`
-                            : `✅ Portafoglio connesso: ${walletAddress.substring(0, 6)}...${walletAddress.substring(38)}`;
+                            ? 'Wallet connected: ' + walletAddress.substring(0, 6) + '...' + walletAddress.substring(38)
+                            : 'Portafoglio connesso: ' + walletAddress.substring(0, 6) + '...' + walletAddress.substring(38);
                         alert(msg);
                     } else {
                         hidePaymentLoader();
@@ -2310,7 +2292,7 @@
                 }
             } catch (error) {
                 hidePaymentLoader();
-                console.error('❌ Wallet connection error:', error);
+                console.error('Wallet connection error:', error);
                 const msg = currentLanguage === 'en' 
                     ? 'Failed to connect wallet. Error: ' + error.message
                     : 'Impossibile connettere il portafoglio. Errore: ' + error.message;
