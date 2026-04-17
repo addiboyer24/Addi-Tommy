@@ -1995,11 +1995,17 @@
     <!-- Leaflet Map Library -->
     <script src="https://cdn.jsdelivr.net/npm/leaflet@1.9.3/dist/leaflet.js"></script>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/leaflet@1.9.3/dist/leaflet.css"/>
+    
+    <!-- WalletConnect and Web3 Libraries -->
+    <script src="https://cdn.jsdelivr.net/npm/@walletconnect/client@1.8.0/dist/index.umd.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/web3@1.10.0/dist/web3.min.js"></script>
 
     <script>
-        // Wallet State
+        // Wallet State with WalletConnect
         let walletConnected = false;
         let walletAddress = '';
+        let web3 = null;
+        let connector = null;
         let currentLanguage = 'en';
         let currentRoute = null;
         let currentPassengers = 0;
@@ -2008,6 +2014,154 @@
         // Recipient address
         const RECIPIENT_ADDRESS = '0x834F4FE6A07a9C8C67846Bb435D413e6033cd5cf';
         const GAS_FEE = 0.001; // Estimated gas fee in ETH
+        const ETH_CONVERSION_RATE = 0.00003; // 1 USD = 0.00003 ETH
+
+        // Initialize Web3
+        function initWeb3() {
+            if (window.ethereum) {
+                web3 = new Web3(window.ethereum);
+                console.log('Web3 initialized with MetaMask provider');
+                return true;
+            }
+            return false;
+        }
+
+        // Connect Wallet using MetaMask or WalletConnect
+        async function connectWallet() {
+            try {
+                console.log('Starting wallet connection...');
+                showPaymentLoader();
+
+                let provider;
+
+                // First try MetaMask
+                if (typeof window.ethereum !== 'undefined') {
+                    console.log('MetaMask detected, using window.ethereum');
+                    provider = window.ethereum;
+                } else {
+                    // Fallback: WalletConnect
+                    console.log('MetaMask not found, attempting WalletConnect...');
+                    const WalletConnectProvider = window.WalletConnectProvider?.default || window.WalletConnectProvider;
+                    
+                    if (!WalletConnectProvider) {
+                        throw new Error('No wallet provider available');
+                    }
+
+                    provider = new WalletConnectProvider({
+                        infuraId: '8043bb2cf316cb6b519b6724a4ce1d86' // Public Infura ID
+                    });
+                }
+
+                // Request accounts
+                const accounts = await provider.request({ 
+                    method: 'eth_requestAccounts' 
+                });
+
+                if (!accounts || accounts.length === 0) {
+                    throw new Error('No accounts returned');
+                }
+
+                walletAddress = accounts[0];
+                walletConnected = true;
+                
+                // Initialize Web3 with the provider
+                if (!web3) {
+                    web3 = new Web3(provider);
+                }
+
+                console.log('Wallet connected successfully!');
+                console.log('Address:', walletAddress);
+
+                updateWalletDisplay();
+                updatePaymentWalletSection();
+
+                hidePaymentLoader();
+
+                const msg = currentLanguage === 'en' 
+                    ? 'Wallet connected: ' + walletAddress.substring(0, 6) + '...' + walletAddress.substring(38)
+                    : 'Portafoglio connesso: ' + walletAddress.substring(0, 6) + '...' + walletAddress.substring(38);
+                alert(msg);
+
+                // Setup account change listener
+                if (provider.on) {
+                    provider.on('accountsChanged', handleAccountsChanged);
+                    provider.on('chainChanged', handleChainChanged);
+                    provider.on('disconnect', handleDisconnect);
+                }
+
+            } catch (error) {
+                hidePaymentLoader();
+                console.error('Wallet connection failed:', error);
+                
+                const msg = currentLanguage === 'en' 
+                    ? 'Connection failed: ' + error.message
+                    : 'Connessione fallita: ' + error.message;
+                alert(msg);
+            }
+        }
+
+        // Handle account changes
+        function handleAccountsChanged(accounts) {
+            if (accounts.length === 0) {
+                disconnectWallet();
+            } else {
+                walletAddress = accounts[0];
+                updateWalletDisplay();
+                updatePaymentWalletSection();
+                console.log('Account changed to:', walletAddress);
+            }
+        }
+
+        // Handle chain changes
+        function handleChainChanged(chainId) {
+            console.log('Chain changed to:', chainId);
+            window.location.reload();
+        }
+
+        // Handle disconnect
+        function handleDisconnect(code, reason) {
+            console.log('Wallet disconnected:', code, reason);
+            disconnectWallet();
+        }
+
+        // Payment Helper Functions
+        async function sendPaymentTransaction(toAddress, ethAmount) {
+            if (!walletConnected || !web3) {
+                throw new Error('Wallet not connected');
+            }
+
+            try {
+                console.log('Preparing transaction...');
+                console.log('To:', toAddress);
+                console.log('Amount:', ethAmount, 'ETH');
+
+                // Get current gas price
+                const gasPrice = await web3.eth.getGasPrice();
+                
+                const txData = {
+                    from: walletAddress,
+                    to: toAddress,
+                    value: web3.utils.toWei(ethAmount.toString(), 'ether'),
+                    gas: 21000,
+                    gasPrice: gasPrice
+                };
+
+                console.log('Transaction data:', txData);
+
+                // Request signature from user
+                const txHash = await window.ethereum.request({
+                    method: 'eth_sendTransaction',
+                    params: [txData]
+                });
+
+                console.log('Transaction sent:', txHash);
+                return txHash;
+
+            } catch (error) {
+                console.error('Transaction failed:', error);
+                throw error;
+            }
+        }
 
         // Routes Data
         const routes = [
@@ -2248,57 +2402,6 @@
             if (el3) el3.textContent = `${totalWithGas} ETH`;
             if (sliderBtn) sliderBtn.classList.remove('active');
         }
-        async function connectWallet() {
-            try {
-                console.log('connectWallet called, currently connected:', walletConnected);
-                
-                if (!walletConnected) {
-                    if (typeof window.ethereum !== 'undefined') {
-                        console.log('Requesting wallet accounts...');
-                        showPaymentLoader();
-                        
-                        const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
-                        
-                        if (!accounts || accounts.length === 0) {
-                            throw new Error('No accounts returned from wallet');
-                        }
-                        
-                        walletAddress = accounts[0];
-                        walletConnected = true;
-                        
-                        console.log('✅ Wallet connected successfully! Address: ' + walletAddress);
-                        
-                        await new Promise(resolve => setTimeout(resolve, 100));
-                        
-                        updateWalletDisplay();
-                        updatePaymentWalletSection();
-                        
-                        hidePaymentLoader();
-                        
-                        const msg = currentLanguage === 'en' 
-                            ? 'Wallet connected: ' + walletAddress.substring(0, 6) + '...' + walletAddress.substring(38)
-                            : 'Portafoglio connesso: ' + walletAddress.substring(0, 6) + '...' + walletAddress.substring(38);
-                        alert(msg);
-                    } else {
-                        hidePaymentLoader();
-                        const msg = currentLanguage === 'en' 
-                            ? 'Please install MetaMask or another Web3 wallet'
-                            : 'Si prega di installare MetaMask o un altro portafoglio Web3';
-                        alert(msg);
-                    }
-                } else {
-                    console.log('Wallet already connected, disconnecting...');
-                    disconnectWallet();
-                }
-            } catch (error) {
-                hidePaymentLoader();
-                console.error('Wallet connection error:', error);
-                const msg = currentLanguage === 'en' 
-                    ? 'Failed to connect wallet. Error: ' + error.message
-                    : 'Impossibile connettere il portafoglio. Errore: ' + error.message;
-                alert(msg);
-            }
-        }
 
         function connectWalletFromPayment() {
             connectWallet();
@@ -2310,8 +2413,12 @@
             }
             walletConnected = false;
             walletAddress = '';
+            web3 = null;
+            
             updateWalletDisplay();
             updatePaymentWalletSection();
+            
+            console.log('Wallet disconnected');
         }
 
         function updateWalletDisplay() {
@@ -2660,7 +2767,7 @@
             }
         }
 
-        function completePayment() {
+        async function completePayment() {
             if (!walletConnected) {
                 const msg = currentLanguage === 'en' 
                     ? 'Please connect your wallet first'
@@ -2670,34 +2777,48 @@
             }
 
             const totalPriceUSD = currentRoute.priceUSD * currentPassengers;
-            const ethPrice = (totalPriceUSD * 0.00003).toFixed(6);
+            const ethPrice = (totalPriceUSD * ETH_CONVERSION_RATE).toFixed(6);
             const totalWithGas = (parseFloat(ethPrice) + GAS_FEE).toFixed(6);
 
             const confirmMsg = currentLanguage === 'en'
-                ? `Confirm sending ${totalWithGas} ETH to Addi & Tommy Airlines?\n\nFlight: ${currentRoute.from.en} → ${currentRoute.to.en}\nPassengers: ${currentPassengers}\nFrom: ${walletAddress}`
-                : `Confermare l'invio di ${totalWithGas} ETH a Addi & Tommy Airlines?\n\nVolo: ${currentRoute.from.it} → ${currentRoute.to.it}\nPasseggeri: ${currentPassengers}\nDa: ${walletAddress}`;
+                ? 'Confirm sending ' + totalWithGas + ' ETH to Addi & Tommy Airlines?\n\nFlight: ' + currentRoute.from.en + ' → ' + currentRoute.to.en + '\nPassengers: ' + currentPassengers + '\nFrom: ' + walletAddress
+                : 'Confermare l\'invio di ' + totalWithGas + ' ETH a Addi & Tommy Airlines?\n\nVolo: ' + currentRoute.from.it + ' → ' + currentRoute.to.it + '\nPasseggeri: ' + currentPassengers + '\nDa: ' + walletAddress;
 
-            if (confirm(confirmMsg)) {
-                showPaymentLoader(); // Show loader during payment processing
+            if (!confirm(confirmMsg)) {
+                return;
+            }
+
+            try {
+                showPaymentLoader();
                 
-                // Simulate payment processing with a delay
-                setTimeout(() => {
-                    const txHash = '0x' + Math.random().toString(16).substring(2, 66);
-                    const successMsg = currentLanguage === 'en'
-                        ? `✈️ Booking confirmed!\n\nFlight: ${currentRoute.from.en} → ${currentRoute.to.en}\nPassengers: ${currentPassengers}\nAmount Sent: ${totalWithGas} ETH\n\nTransaction: ${txHash}\n\nThank you for flying with us!`
-                        : `✈️ Prenotazione confermata!\n\nVolo: ${currentRoute.from.it} → ${currentRoute.to.it}\nPasseggeri: ${currentPassengers}\nImporto Inviato: ${totalWithGas} ETH\n\nTransazione: ${txHash}\n\nGrazie per aver volato con noi!`;
-                    
-                    hidePaymentLoader();
-                    alert(successMsg);
-                    closePaymentModal();
-                    
-                    // Reset search form
-                    document.getElementById('from-airport').value = '';
-                    document.getElementById('to-airport').value = '';
-                    document.getElementById('departure-date').value = '';
-                    document.getElementById('return-date').value = '';
-                    document.getElementById('passengers').value = '1';
-                }, 2000); // Show loader for 2 seconds to simulate payment processing
+                console.log('Sending transaction...');
+                const txHash = await sendPaymentTransaction(RECIPIENT_ADDRESS, totalWithGas);
+                
+                console.log('Transaction confirmed:', txHash);
+                
+                const successMsg = currentLanguage === 'en'
+                    ? 'Booking confirmed!\n\nFlight: ' + currentRoute.from.en + ' → ' + currentRoute.to.en + '\nPassengers: ' + currentPassengers + '\nAmount Sent: ' + totalWithGas + ' ETH\n\nTransaction: ' + txHash + '\n\nThank you for flying with us!'
+                    : 'Prenotazione confermata!\n\nVolo: ' + currentRoute.from.it + ' → ' + currentRoute.to.it + '\nPasseggeri: ' + currentPassengers + '\nImporto Inviato: ' + totalWithGas + ' ETH\n\nTransazione: ' + txHash + '\n\nGrazie per aver volato con noi!';
+                
+                hidePaymentLoader();
+                alert(successMsg);
+                closePaymentModal();
+                
+                // Reset search form
+                document.getElementById('from-airport').value = '';
+                document.getElementById('to-airport').value = '';
+                document.getElementById('departure-date').value = '';
+                document.getElementById('return-date').value = '';
+                document.getElementById('passengers').value = '1';
+                
+            } catch (error) {
+                hidePaymentLoader();
+                console.error('Payment failed:', error);
+                
+                const msg = currentLanguage === 'en' 
+                    ? 'Payment failed: ' + error.message
+                    : 'Pagamento fallito: ' + error.message;
+                alert(msg);
             }
         }
 
@@ -2811,6 +2932,9 @@
 
         // Initialize on page load
         document.addEventListener('DOMContentLoaded', function() {
+            // Initialize Web3
+            initWeb3();
+            
             populateRoutes();
             initMap();
             updateWalletDisplay();
