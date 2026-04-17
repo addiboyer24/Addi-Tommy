@@ -695,6 +695,155 @@
             background: #d1d5db;
         }
 
+        /* Confirmation Screen Styles */
+        .payment-confirmation-screen {
+            display: none;
+        }
+
+        .confirmation-header {
+            background: linear-gradient(135deg, var(--crypto-green) 0%, #059669 100%);
+            color: white;
+            padding: 1.5rem;
+            border-radius: 10px;
+            margin-bottom: 1.5rem;
+            text-align: center;
+        }
+
+        .confirmation-header h3 {
+            margin: 0;
+            font-size: 1.3rem;
+        }
+
+        .address-box {
+            background: var(--light-bg);
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            padding: 1rem;
+            margin-bottom: 1rem;
+            font-size: 0.85rem;
+        }
+
+        .address-box-label {
+            color: var(--text-light);
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            display: block;
+        }
+
+        .address-box-value {
+            background: white;
+            padding: 0.75rem;
+            border-radius: 5px;
+            border: 1px solid #ddd;
+            font-family: 'Courier New', monospace;
+            word-break: break-all;
+            font-size: 0.8rem;
+            color: var(--primary-color);
+        }
+
+        .confirmation-summary {
+            background: #f0f9ff;
+            border: 2px solid var(--primary-color);
+            padding: 1rem;
+            border-radius: 8px;
+            margin-bottom: 1.5rem;
+        }
+
+        .confirmation-summary p {
+            margin-bottom: 0.5rem;
+            font-size: 0.9rem;
+        }
+
+        .confirmation-summary strong {
+            color: var(--primary-color);
+        }
+
+        /* Slider Button Styles */
+        .slider-button-container {
+            margin-top: 1.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .slider-button {
+            width: 100%;
+            height: 60px;
+            background: linear-gradient(90deg, #e5e7eb 0%, #d1d5db 100%);
+            border: 2px solid #9ca3af;
+            border-radius: 30px;
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            color: #666;
+            font-size: 0.9rem;
+        }
+
+        .slider-button.ready {
+            background: linear-gradient(90deg, var(--crypto-green) 0%, #059669 100%);
+            border: 2px solid #047857;
+            color: white;
+        }
+
+        .slider-thumb {
+            position: absolute;
+            left: 2px;
+            width: 56px;
+            height: 56px;
+            background: white;
+            border-radius: 28px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+            transition: left 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+        }
+
+        .slider-button.ready .slider-thumb {
+            background: var(--crypto-green);
+            color: white;
+        }
+
+        .slider-button.active .slider-thumb {
+            left: calc(100% - 58px);
+        }
+
+        .slider-text {
+            position: relative;
+            z-index: 1;
+            user-select: none;
+            pointer-events: none;
+        }
+
+        .confirmation-actions {
+            display: flex;
+            gap: 1rem;
+        }
+
+        .confirmation-actions button {
+            flex: 1;
+            padding: 0.75rem;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: bold;
+            font-size: 0.9rem;
+            transition: all 0.3s;
+        }
+
+        .btn-back {
+            background: #e5e7eb;
+            color: var(--text-dark);
+        }
+
+        .btn-back:hover {
+            background: #d1d5db;
+        }
+
         /* Responsive Design */
         @media (max-width: 768px) {
             nav {
@@ -998,10 +1147,48 @@
                 </div>
 
                 <div class="payment-actions">
-                    <button class="btn-pay" onclick="completePayment()" id="pay-btn" data-en="Pay Now" data-it="Paga Ora">Pay Now</button>
+                    <button class="btn-pay" onclick="proceedToConfirmation()" id="pay-btn" data-en="Pay Now" data-it="Paga Ora">Pay Now</button>
                     <button class="btn-cancel" onclick="closePaymentModal()" data-en="Cancel" data-it="Annulla">Cancel</button>
                 </div>
             </div>
+
+            <!-- Payment Confirmation Screen -->
+            <div class="payment-confirmation-screen" id="payment-confirmation-screen">
+                <div class="confirmation-header">
+                    <h3 data-en="Confirm Payment" data-it="Conferma Pagamento">Confirm Payment</h3>
+                    <p style="margin-top: 0.5rem; font-size: 0.9rem;" data-en="Review your payment details and slide to confirm" data-it="Rivedi i dettagli del pagamento e scorri per confermare">Review your payment details and slide to confirm</p>
+                </div>
+
+                <div>
+                    <div class="address-box">
+                        <span class="address-box-label" data-en="Your Wallet Address" data-it="Il Tuo Indirizzo Portafoglio">Your Wallet Address</span>
+                        <div class="address-box-value" id="confirmation-from-address">---</div>
+                    </div>
+
+                    <div class="address-box">
+                        <span class="address-box-label" data-en="Addi & Tommy Airlines" data-it="Addi & Tommy Airlines">Addi & Tommy Airlines</span>
+                        <div class="address-box-value">0x834F4FE6A07a9C8C67846Bb435D413e6033cd5cf</div>
+                    </div>
+
+                    <div class="confirmation-summary">
+                        <p><strong data-en="Flight:" data-it="Volo:">Flight:</strong> <span id="confirmation-flight">---</span></p>
+                        <p><strong data-en="Passengers:" data-it="Passeggeri:">Passengers:</strong> <span id="confirmation-passengers">---</span></p>
+                        <p><strong data-en="Amount to Send:" data-it="Importo da Inviare:">Amount to Send:</strong> <span id="confirmation-amount" style="color: var(--crypto-green); font-size: 1.1rem;">---</span></p>
+                    </div>
+                </div>
+
+                <div class="slider-button-container">
+                    <div class="slider-button ready" id="slider-button" onclick="handleSliderClick(event)">
+                        <div class="slider-thumb">→</div>
+                        <div class="slider-text" data-en="Slide to Confirm" data-it="Scorri per Confermare">Slide to Confirm</div>
+                    </div>
+                </div>
+
+                <div class="confirmation-actions">
+                    <button class="btn-back" onclick="backToPaymentForm()" data-en="Back" data-it="Indietro">Back</button>
+                </div>
+            </div>
+        
         </div>
     </div>
 
@@ -1373,6 +1560,54 @@
                 document.getElementById('departure-date').value = '';
                 document.getElementById('return-date').value = '';
                 document.getElementById('passengers').value = '1';
+            }
+        }
+
+        function proceedToConfirmation() {
+            if (!walletConnected) {
+                const msg = currentLanguage === 'en' 
+                    ? 'Please connect your wallet first'
+                    : 'Si prega di connettere il portafoglio prima';
+                alert(msg);
+                return;
+            }
+
+            // Update confirmation screen with current details
+            const totalPriceUSD = currentRoute.priceUSD * currentPassengers;
+            const ethPrice = (totalPriceUSD * 0.00003).toFixed(6);
+            const totalWithGas = (parseFloat(ethPrice) + GAS_FEE).toFixed(6);
+
+            const flightText = currentLanguage === 'en'
+                ? `${currentRoute.from.en} → ${currentRoute.to.en}`
+                : `${currentRoute.from.it} → ${currentRoute.to.it}`;
+
+            document.getElementById('confirmation-from-address').textContent = walletAddress;
+            document.getElementById('confirmation-flight').textContent = flightText;
+            document.getElementById('confirmation-passengers').textContent = currentPassengers;
+            document.getElementById('confirmation-amount').textContent = totalWithGas + ' ETH';
+
+            // Reset slider
+            document.getElementById('slider-button').classList.remove('active');
+
+            // Hide payment form, show confirmation
+            document.getElementById('payment-form-section').style.display = 'none';
+            document.getElementById('payment-confirmation-screen').style.display = 'block';
+        }
+
+        function backToPaymentForm() {
+            document.getElementById('payment-confirmation-screen').style.display = 'none';
+            document.getElementById('payment-form-section').style.display = 'block';
+            document.getElementById('slider-button').classList.remove('active');
+        }
+
+        function handleSliderClick(event) {
+            const slider = document.getElementById('slider-button');
+            
+            if (!slider.classList.contains('active')) {
+                slider.classList.add('active');
+            } else {
+                // Slider fully swiped - complete payment
+                completePayment();
             }
         }
 
