@@ -3236,6 +3236,14 @@
             const ethPrice = (totalPriceUSD * ETH_CONVERSION_RATE).toFixed(6);
             const totalWithGas = (parseFloat(ethPrice) + GAS_FEE).toFixed(6);
 
+            const confirmMsg = currentLanguage === 'en'
+                ? 'Confirm sending ' + totalWithGas + ' ETH to Addi & Tommy Airlines?\n\nFlight: ' + currentRoute.from.en + ' → ' + currentRoute.to.en + '\nPassengers: ' + currentPassengers + '\nFrom: ' + walletAddress
+                : 'Confermare l\'invio di ' + totalWithGas + ' ETH a Addi & Tommy Airlines?\n\nVolo: ' + currentRoute.from.it + ' → ' + currentRoute.to.it + '\nPasseggeri: ' + currentPassengers + '\nDa: ' + walletAddress;
+
+            if (!confirm(confirmMsg)) {
+                return;
+            }
+
             try {
                 showPaymentLoader();
                 
