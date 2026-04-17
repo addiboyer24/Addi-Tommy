@@ -1227,218 +1227,6 @@
             display: block;
         }
 
-        /* Notification Toast with Spinning Coin */
-        .notification-toast {
-            position: fixed;
-            top: 20px;
-            right: 20px;
-            background: linear-gradient(135deg, rgba(16, 185, 129, 0.95) 0%, rgba(0, 102, 204, 0.95) 100%);
-            color: white;
-            padding: 1.5rem;
-            border-radius: 12px;
-            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
-            display: flex;
-            align-items: center;
-            gap: 1rem;
-            z-index: 10000;
-            max-width: 400px;
-            animation: slideIn 0.4s ease-out;
-            backdrop-filter: blur(10px);
-            border: 1px solid rgba(255, 255, 255, 0.2);
-        }
-
-        .notification-toast.error {
-            background: linear-gradient(135deg, rgba(220, 38, 38, 0.95) 0%, rgba(153, 27, 27, 0.95) 100%);
-        }
-
-        .notification-toast.success {
-            background: linear-gradient(135deg, rgba(16, 185, 129, 0.95) 0%, rgba(5, 150, 105, 0.95) 100%);
-        }
-
-        .notification-icon {
-            font-size: 2rem;
-            animation: spin 3s linear infinite;
-            flex-shrink: 0;
-        }
-
-        .notification-toast.error .notification-icon {
-            animation: shake 0.5s ease-in-out;
-        }
-
-        .notification-toast.success .notification-icon {
-            animation: bounce 0.6s ease-out;
-        }
-
-        .notification-content {
-            flex: 1;
-        }
-
-        .notification-title {
-            font-weight: 600;
-            font-size: 1rem;
-            margin-bottom: 0.25rem;
-        }
-
-        .notification-message {
-            font-size: 0.9rem;
-            opacity: 0.95;
-            line-height: 1.4;
-        }
-
-        .notification-close {
-            background: rgba(255, 255, 255, 0.2);
-            border: none;
-            color: white;
-            cursor: pointer;
-            width: 28px;
-            height: 28px;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 1.2rem;
-            transition: background 0.3s ease;
-            flex-shrink: 0;
-        }
-
-        .notification-close:hover {
-            background: rgba(255, 255, 255, 0.3);
-        }
-
-        @keyframes slideIn {
-            from {
-                transform: translateX(400px);
-                opacity: 0;
-            }
-            to {
-                transform: translateX(0);
-                opacity: 1;
-            }
-        }
-
-        @keyframes slideOut {
-            from {
-                transform: translateX(0);
-                opacity: 1;
-            }
-            to {
-                transform: translateX(400px);
-                opacity: 0;
-            }
-        }
-
-        @keyframes spin {
-            from {
-                transform: rotateY(0deg);
-            }
-            to {
-                transform: rotateY(360deg);
-            }
-        }
-
-        @keyframes shake {
-            0%, 100% { transform: translateX(0); }
-            25% { transform: translateX(-10px); }
-            75% { transform: translateX(10px); }
-        }
-
-        @keyframes bounce {
-            0% { transform: translateY(-20px); opacity: 0; }
-            50% { transform: translateY(0); }
-            100% { opacity: 1; }
-        }
-
-        /* Image CAPTCHA */
-        .image-captcha-container {
-            display: flex;
-            flex-direction: column;
-            gap: 1rem;
-        }
-
-        .image-captcha-question {
-            background: white;
-            padding: 1rem;
-            border-radius: 8px;
-            border-left: 4px solid #0066cc;
-            font-weight: 600;
-            color: #333;
-            text-align: center;
-        }
-
-        .image-captcha-grid {
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 1rem;
-        }
-
-        .image-captcha-option {
-            aspect-ratio: 1;
-            background: white;
-            border: 2px solid #e5e7eb;
-            border-radius: 10px;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 4rem;
-            transition: all 0.3s ease;
-            position: relative;
-            overflow: hidden;
-        }
-
-        .image-captcha-option:hover {
-            border-color: #0066cc;
-            transform: scale(1.05);
-            box-shadow: 0 4px 12px rgba(0, 102, 204, 0.2);
-        }
-
-        .image-captcha-option.selected {
-            border-color: #0066cc;
-            background: rgba(0, 102, 204, 0.1);
-            box-shadow: 0 4px 12px rgba(0, 102, 204, 0.3);
-        }
-
-        .image-captcha-option.correct {
-            border-color: #10b981;
-            background: rgba(16, 185, 129, 0.1);
-            animation: pulse 0.5s ease;
-        }
-
-        .image-captcha-option.incorrect {
-            border-color: #dc2626;
-            background: rgba(220, 38, 38, 0.1);
-            animation: shake 0.4s ease;
-        }
-
-        @keyframes pulse {
-            0%, 100% { transform: scale(1); }
-            50% { transform: scale(1.1); }
-        }
-
-        .image-captcha-submit {
-            width: 100%;
-            padding: 0.75rem;
-            background: linear-gradient(90deg, #0066cc 0%, #004499 100%);
-            color: white;
-            border: none;
-            border-radius: 6px;
-            font-weight: 600;
-            cursor: pointer;
-            font-size: 0.95rem;
-            transition: all 0.3s ease;
-            margin-top: 0.5rem;
-        }
-
-        .image-captcha-submit:hover:not(:disabled) {
-            transform: translateY(-2px);
-            box-shadow: 0 4px 12px rgba(0, 102, 204, 0.3);
-        }
-
-        .image-captcha-submit:disabled {
-            opacity: 0.5;
-            cursor: not-allowed;
-        }
-
         .confirmation-actions {
             display: flex;
             flex-direction: column;
@@ -2229,9 +2017,10 @@
                             <span>🔐</span>
                             <span data-en="Verify you are human" data-it="Verifica che sei umano">Verify you are human</span>
                         </div>
-                        <div class="image-captcha-container">
-                            <div class="captcha-question" id="captcha-question"></div>
-                            <div class="image-captcha-grid" id="captcha-grid"></div>
+                        <div class="captcha-question" id="captcha-question"></div>
+                        <div class="captcha-input-group">
+                            <input type="text" class="captcha-input" id="captcha-answer" placeholder="Your answer" data-en-placeholder="Your answer" data-it-placeholder="La tua risposta">
+                            <button class="captcha-verify-btn" id="captcha-verify-btn" onclick="verifyCaptcha()" data-en="Verify" data-it="Verifica">Verify</button>
                         </div>
                         <div class="captcha-error" id="captcha-error"></div>
                     </div>
@@ -2334,9 +2123,9 @@
                 hidePaymentLoader();
 
                 const msg = currentLanguage === 'en' 
-                    ? walletAddress.substring(0, 6) + '...' + walletAddress.substring(38)
-                    : walletAddress.substring(0, 6) + '...' + walletAddress.substring(38);
-                showNotification(msg, 'success', currentLanguage === 'en' ? 'Wallet Connected' : 'Portafoglio Connesso');
+                    ? 'Wallet connected: ' + walletAddress.substring(0, 6) + '...' + walletAddress.substring(38)
+                    : 'Portafoglio connesso: ' + walletAddress.substring(0, 6) + '...' + walletAddress.substring(38);
+                alert(msg);
 
                 // Setup account change listener
                 if (provider.on) {
@@ -2352,7 +2141,7 @@
                 const msg = currentLanguage === 'en' 
                     ? 'Connection failed: ' + error.message
                     : 'Connessione fallita: ' + error.message;
-                showNotification(msg, 'error', currentLanguage === 'en' ? 'Connection Failed' : 'Connessione Fallita');
+                alert(msg);
             }
         }
 
@@ -2548,7 +2337,7 @@
                 const msg = currentLanguage === 'en' 
                     ? 'No flight selected'
                     : 'Nessun volo selezionato';
-                showNotification(msg, 'error', currentLanguage === 'en' ? 'No Flight' : 'Nessun Volo');
+                alert(msg);
                 console.error('No route for step 2');
                 hidePaymentLoader();
                 return;
@@ -2757,8 +2546,7 @@
                 goToStep(3);
             } else {
                 console.error('Cannot proceed: wallet=' + walletConnected + ', route=' + !!currentRoute);
-                const msg = currentLanguage === 'en' ? 'Error: Wallet not connected or no route selected' : 'Errore: Portafoglio non connesso o nessuna rotta selezionata';
-                showNotification(msg, 'error', currentLanguage === 'en' ? 'Error' : 'Errore');
+                alert(currentLanguage === 'en' ? 'Error: Wallet not connected or no route selected' : 'Errore: Portafoglio non connesso o nessuna rotta selezionata');
             }
         }
 
@@ -3123,14 +2911,14 @@
 
             if (!fromAirport || !toAirport || !departure) {
                 const msg = currentLanguage === 'en' ? 'Please fill in all required fields' : 'Per favore riempi tutti i campi obbligatori';
-                showNotification(msg, 'error', currentLanguage === 'en' ? 'Missing Fields' : 'Campi Mancanti');
+                alert(msg);
                 console.warn('Missing required fields');
                 return;
             }
 
             if (fromAirport === toAirport) {
                 const msg = currentLanguage === 'en' ? 'Departure and destination cannot be the same' : 'La partenza e la destinazione non possono essere uguali';
-                showNotification(msg, 'error', currentLanguage === 'en' ? 'Invalid Route' : 'Rotta Non Valida');
+                alert(msg);
                 console.warn('From and to airports are the same');
                 return;
             }
@@ -3146,7 +2934,7 @@
                 const msg = currentLanguage === 'en' 
                     ? 'No routes available for this route combination' 
                     : 'Nessuna rotta disponibile per questa combinazione';
-                showNotification(msg, 'error', currentLanguage === 'en' ? 'No Routes' : 'Nessuna Rotta');
+                alert(msg);
                 console.warn('No routes found for:', { fromAirport, toAirport });
                 return;
             }
@@ -3197,7 +2985,7 @@
                 const msg = currentLanguage === 'en' 
                     ? 'Error opening payment. Please try again.'
                     : 'Errore nell\'apertura del pagamento. Per favore riprova.';
-                showNotification(msg, 'error', currentLanguage === 'en' ? 'Payment Error' : 'Errore Pagamento');
+                alert(msg);
             }
         }
 
@@ -3228,7 +3016,7 @@
                 const msg = currentLanguage === 'en' 
                     ? 'Please connect your wallet first'
                     : 'Si prega di connettere il portafoglio prima';
-                showNotification(msg, 'error', currentLanguage === 'en' ? 'Wallet Required' : 'Portafoglio Richiesto');
+                alert(msg);
                 return;
             }
 
@@ -3253,11 +3041,11 @@
                 console.log('Transaction confirmed:', txHash);
                 
                 const successMsg = currentLanguage === 'en'
-                    ? 'Booking confirmed! Flight: ' + currentRoute.from.en + ' → ' + currentRoute.to.en + ' | Passengers: ' + currentPassengers + ' | Amount: ' + totalWithGas + ' ETH | TX: ' + txHash
-                    : 'Prenotazione confermata! Volo: ' + currentRoute.from.it + ' → ' + currentRoute.to.it + ' | Passeggeri: ' + currentPassengers + ' | Importo: ' + totalWithGas + ' ETH | TX: ' + txHash;
+                    ? 'Booking confirmed!\n\nFlight: ' + currentRoute.from.en + ' → ' + currentRoute.to.en + '\nPassengers: ' + currentPassengers + '\nAmount Sent: ' + totalWithGas + ' ETH\n\nTransaction: ' + txHash + '\n\nThank you for flying with us!'
+                    : 'Prenotazione confermata!\n\nVolo: ' + currentRoute.from.it + ' → ' + currentRoute.to.it + '\nPasseggeri: ' + currentPassengers + '\nImporto Inviato: ' + totalWithGas + ' ETH\n\nTransazione: ' + txHash + '\n\nGrazie per aver volato con noi!';
                 
                 hidePaymentLoader();
-                showNotification(successMsg, 'success', currentLanguage === 'en' ? 'Booking Confirmed' : 'Prenotazione Confermata');
+                alert(successMsg);
                 closePaymentModal();
                 
                 // Reset search form
@@ -3273,7 +3061,7 @@
                 const msg = currentLanguage === 'en' 
                     ? 'Payment failed: ' + error.message
                     : 'Pagamento fallito: ' + error.message;
-                showNotification(msg, 'error', currentLanguage === 'en' ? 'Payment Failed' : 'Pagamento Fallito');
+                alert(msg);
             }
         }
 
@@ -3282,7 +3070,7 @@
                 const msg = currentLanguage === 'en' 
                     ? 'Please connect your wallet first'
                     : 'Si prega di connettere il portafoglio prima';
-                showNotification(msg, 'error', currentLanguage === 'en' ? 'Wallet Required' : 'Portafoglio Richiesto');
+                alert(msg);
                 return;
             }
 
@@ -3338,176 +3126,11 @@
             if (spaBackBtn) spaBackBtn.style.display = 'none';
         }
 
-        // Notification Toast System with Spinning Coin
-        function showNotification(message, type = 'info', title = null, duration = 5000) {
-            const container = document.getElementById('notification-container');
-            if (!container) {
-                const newContainer = document.createElement('div');
-                newContainer.id = 'notification-container';
-                document.body.appendChild(newContainer);
-            }
-
-            const notifContainer = document.getElementById('notification-container');
-            const toast = document.createElement('div');
-            toast.className = `notification-toast ${type}`;
-
-            const iconMap = {
-                info: '🪙',
-                success: '✨',
-                error: '⚠️'
-            };
-
-            const titleMap = {
-                info: currentLanguage === 'en' ? 'Notice' : 'Avviso',
-                success: currentLanguage === 'en' ? 'Success!' : 'Successo!',
-                error: currentLanguage === 'en' ? 'Error' : 'Errore'
-            };
-
-            const icon = iconMap[type] || '🪙';
-            const displayTitle = title || titleMap[type];
-
-            toast.innerHTML = `
-                <div class="notification-icon">${icon}</div>
-                <div class="notification-content">
-                    <div class="notification-title">${displayTitle}</div>
-                    <div class="notification-message">${message}</div>
-                </div>
-                <button class="notification-close" onclick="this.parentElement.remove()">✕</button>
-            `;
-
-            notifContainer.appendChild(toast);
-
-            if (duration > 0) {
-                setTimeout(() => {
-                    toast.style.animation = 'slideOut 0.4s ease-in forwards';
-                    setTimeout(() => toast.remove(), 400);
-                }, duration);
-            }
-
-            return toast;
-        }
-
         // CAPTCHA variables
         let currentCaptcha = null;
 
-        // Image-based CAPTCHA objects and questions
-        const captchaEmojis = {
-            '🍎': { name: 'apple', category: 'fruit' },
-            '🍊': { name: 'orange', category: 'fruit' },
-            '🍓': { name: 'strawberry', category: 'fruit' },
-            '⭐': { name: 'star', category: 'shape' },
-            '🟠': { name: 'orange_circle', category: 'shape' },
-            '🔵': { name: 'blue_circle', category: 'shape' },
-            '🟢': { name: 'green_circle', category: 'shape' },
-            '🟡': { name: 'yellow_circle', category: 'shape' },
-            '🔴': { name: 'red_circle', category: 'shape' },
-            '🟥': { name: 'red_square', category: 'shape' },
-            '🟦': { name: 'blue_square', category: 'shape' },
-            '🟩': { name: 'green_square', category: 'shape' },
-            '🟪': { name: 'purple_square', category: 'shape' },
-            '🌟': { name: 'star_gold', category: 'shape' },
-            '✓': { name: 'checkmark', category: 'symbol' }
-        };
-
-        const captchaQuestions = {
-            en: [
-                { type: 'color', target: 'blue_circle', question: 'Click the blue circle' },
-                { type: 'color', target: 'red_circle', question: 'Click the red circle' },
-                { type: 'color', target: 'green_circle', question: 'Click the green circle' },
-                { type: 'shape', target: 'star', question: 'Click the star' },
-                { type: 'object', target: 'apple', question: 'Click the apple' },
-                { type: 'object', target: 'orange', question: 'Click the orange' },
-                { type: 'shape', target: 'red_square', question: 'Click the red square' },
-                { type: 'shape', target: 'blue_square', question: 'Click the blue square' }
-            ],
-            it: [
-                { type: 'color', target: 'blue_circle', question: 'Clicca sul cerchio blu' },
-                { type: 'color', target: 'red_circle', question: 'Clicca sul cerchio rosso' },
-                { type: 'color', target: 'green_circle', question: 'Clicca sul cerchio verde' },
-                { type: 'shape', target: 'star', question: 'Clicca sulla stella' },
-                { type: 'object', target: 'apple', question: 'Clicca sulla mela' },
-                { type: 'object', target: 'orange', question: 'Clicca sull\'arancia' },
-                { type: 'shape', target: 'red_square', question: 'Clicca sul quadrato rosso' },
-                { type: 'shape', target: 'blue_square', question: 'Clicca sul quadrato blu' }
-            ]
-        };
-
-        // Initialize Image CAPTCHA
+        // Initialize CAPTCHA
         function initializeCaptcha() {
-            const questionsArray = captchaQuestions[currentLanguage] || captchaQuestions.en;
-            const question = questionsArray[Math.floor(Math.random() * questionsArray.length)];
-            
-            currentCaptcha = {
-                target: question.target,
-                question: question.question,
-                answered: false
-            };
-
-            const container = document.getElementById('captcha-container');
-            if (!container) return;
-
-            // Get 4 random emojis with one being the target
-            const emojis = Object.keys(captchaEmojis);
-            let options = [question.target];
-            
-            while (options.length < 4) {
-                const random = captchaEmojis[emojis[Math.floor(Math.random() * emojis.length)]];
-                if (!options.includes(random.name)) {
-                    options.push(random.name);
-                }
-            }
-            
-            // Shuffle options
-            options = options.sort(() => Math.random() - 0.5);
-
-            // Find emoji for each option
-            const emojiMap = {};
-            Object.entries(captchaEmojis).forEach(([emoji, data]) => {
-                emojiMap[data.name] = emoji;
-            });
-
-            // Update question
-            document.getElementById('captcha-question').textContent = question.question;
-            
-            // Update grid
-            const grid = document.getElementById('captcha-grid');
-            if (grid) {
-                grid.innerHTML = options.map((optionName, idx) => `
-                    <div class="image-captcha-option" onclick="selectCaptchaImage('${optionName}')">
-                        ${emojiMap[optionName]}
-                    </div>
-                `).join('');
-            }
-
-            // Reset error message
-            const errorMsg = document.getElementById('captcha-error');
-            if (errorMsg) {
-                errorMsg.classList.remove('show');
-            }
-
-            currentCaptcha.answered = false;
-        }
-
-        // Select CAPTCHA image
-        function selectCaptchaImage(selectedName) {
-            if (currentCaptcha.answered) return;
-
-            const options = document.querySelectorAll('.image-captcha-option');
-            options.forEach(opt => opt.classList.remove('selected', 'correct', 'incorrect'));
-
-            const selectedElement = Array.from(options).find(opt => {
-                const emoji = opt.textContent.trim();
-                return Object.values(captchaEmojis).find(e => e.name === selectedName) && 
-                       Object.entries(captchaEmojis).find(([e, d]) => d.name === selectedName && e === emoji);
-            });
-
-            if (selectedElement) {
-                selectedElement.classList.add('selected');
-            }
-
-            // Auto-verify after selection
-            setTimeout(() => verifyCaptcha(selectedName), 300);
-        }
             const num1 = Math.floor(Math.random() * 20) + 1;
             const num2 = Math.floor(Math.random() * 20) + 1;
             const operator = Math.random() > 0.5 ? '+' : '-';
@@ -3525,57 +3148,34 @@
         }
 
         // Verify CAPTCHA answer
-        function verifyCaptcha(selectedName) {
-            if (currentCaptcha.answered) return;
+        function verifyCaptcha() {
+            const userAnswer = document.getElementById('captcha-answer').value.trim();
+            const answerInput = document.getElementById('captcha-answer');
+            const errorMsg = document.getElementById('captcha-error');
             
-            currentCaptcha.answered = true;
-            const options = document.querySelectorAll('.image-captcha-option');
+            if (!userAnswer) {
+                answerInput.classList.add('error');
+                errorMsg.textContent = currentLanguage === 'en' ? 'Please enter an answer' : 'Per favore inserisci una risposta';
+                errorMsg.classList.add('show');
+                return;
+            }
             
-            if (selectedName === currentCaptcha.target) {
-                // Correct answer
-                const selectedElement = Array.from(options).find(opt => {
-                    const optionName = Object.values(captchaEmojis).find(e => {
-                        const emojiKey = Object.entries(captchaEmojis).find(([k, v]) => v.name === e.name && k === opt.textContent.trim());
-                        return emojiKey && emojiKey[1].name === selectedName;
-                    });
-                    return optionName;
-                });
-
-                if (selectedElement) {
-                    selectedElement.classList.remove('selected');
-                    selectedElement.classList.add('correct');
-                }
-
-                showNotification(
-                    currentLanguage === 'en' ? 'Verification successful!' : 'Verifica riuscita!',
-                    'success',
-                    currentLanguage === 'en' ? 'You\'re Human' : 'Sei Umano'
-                );
-
+            if (parseInt(userAnswer) === currentCaptcha.answer) {
+                answerInput.classList.add('success');
+                answerInput.classList.remove('error');
+                errorMsg.classList.remove('show');
+                
+                // Disable input and show success
                 setTimeout(() => {
                     completePayment();
-                }, 1000);
+                }, 500);
             } else {
-                // Incorrect answer
-                const selectedElement = Array.from(options).find(opt => {
-                    const optionName = Object.values(captchaEmojis).find(e => {
-                        const emojiKey = Object.entries(captchaEmojis).find(([k, v]) => v.name === e.name && k === opt.textContent.trim());
-                        return emojiKey && emojiKey[1].name === selectedName;
-                    });
-                    return optionName;
-                });
-
-                if (selectedElement) {
-                    selectedElement.classList.remove('selected');
-                    selectedElement.classList.add('incorrect');
-                }
-
-                showNotification(
-                    currentLanguage === 'en' ? 'Wrong selection. Try again!' : 'Selezione sbagliata. Riprova!',
-                    'error',
-                    currentLanguage === 'en' ? 'Incorrect' : 'Errato'
-                );
-
+                answerInput.classList.add('error');
+                answerInput.classList.remove('success');
+                errorMsg.textContent = currentLanguage === 'en' ? 'Incorrect answer. Try again!' : 'Risposta errata. Riprova!';
+                errorMsg.classList.add('show');
+                
+                // Refresh CAPTCHA after error
                 setTimeout(() => {
                     initializeCaptcha();
                 }, 1500);
@@ -3602,7 +3202,7 @@
             const msg = currentLanguage === 'en' 
                 ? 'Thank you for contacting us! We will get back to you soon.'
                 : 'Grazie per averci contattato! Ti contatteremo presto.';
-            showNotification(msg, 'success', currentLanguage === 'en' ? 'Message Sent' : 'Messaggio Inviato');
+            alert(msg);
             closeContactModal();
         }
 
