@@ -1128,67 +1128,103 @@
             font-weight: 700;
         }
 
-        /* Slider Button - Mobile Friendly */
-        .slider-button-container {
+        /* CAPTCHA Verification - Mobile Friendly */
+        .captcha-container {
             margin-top: 1.5rem;
+            margin-bottom: 1rem;
+            background: linear-gradient(135deg, rgba(16, 185, 129, 0.1) 0%, rgba(0, 102, 204, 0.1) 100%);
+            padding: 1.5rem;
+            border-radius: 10px;
+            border: 2px solid #e5e7eb;
+        }
+
+        .captcha-header {
+            font-weight: 600;
+            color: #0066cc;
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 0.95rem;
+        }
+
+        .captcha-question {
+            background: white;
+            padding: 1rem;
+            border-radius: 8px;
+            margin-bottom: 1rem;
+            border-left: 4px solid #0066cc;
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: #333;
+        }
+
+        .captcha-input-group {
+            display: flex;
+            gap: 0.75rem;
             margin-bottom: 1rem;
         }
 
-        .slider-button {
-            width: 100%;
-            height: 56px;
-            background: linear-gradient(90deg, #e5e7eb 0%, #d1d5db 100%);
-            border: 2px solid #9ca3af;
-            border-radius: 8px;
-            cursor: pointer;
-            position: relative;
-            overflow: hidden;
-            transition: all 0.3s ease;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-weight: 600;
-            color: #666;
-            font-size: 0.95rem;
-            touch-action: manipulation;
-        }
-
-        .slider-button.ready {
-            background: linear-gradient(90deg, var(--crypto-green) 0%, #059669 100%);
-            border: 2px solid #047857;
-            color: white;
-        }
-
-        .slider-thumb {
-            position: absolute;
-            left: 3px;
-            width: 50px;
-            height: 50px;
-            background: white;
+        .captcha-input {
+            flex: 1;
+            padding: 0.75rem;
+            border: 2px solid #d1d5db;
             border-radius: 6px;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.2);
-            transition: left 0.3s ease;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 1.25rem;
-            font-weight: bold;
+            font-size: 1rem;
+            font-weight: 600;
+            text-align: center;
+            transition: border-color 0.3s ease;
         }
 
-        .slider-button.ready .slider-thumb {
-            background: var(--crypto-green);
+        .captcha-input:focus {
+            outline: none;
+            border-color: #0066cc;
+            box-shadow: 0 0 0 3px rgba(0, 102, 204, 0.1);
+        }
+
+        .captcha-input.error {
+            border-color: #dc2626;
+            background-color: rgba(220, 38, 38, 0.05);
+        }
+
+        .captcha-input.success {
+            border-color: #10b981;
+            background-color: rgba(16, 185, 129, 0.05);
+        }
+
+        .captcha-verify-btn {
+            width: 100%;
+            padding: 0.75rem;
+            background: linear-gradient(90deg, #0066cc 0%, #004499 100%);
             color: white;
+            border: none;
+            border-radius: 6px;
+            font-weight: 600;
+            cursor: pointer;
+            font-size: 0.95rem;
+            transition: all 0.3s ease;
         }
 
-        .slider-button.active .slider-thumb {
-            left: calc(100% - 53px);
+        .captcha-verify-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0, 102, 204, 0.3);
         }
 
-        .slider-text {
-            position: relative;
-            z-index: 1;
-            user-select: none;
-            pointer-events: none;
+        .captcha-verify-btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .captcha-error {
+            color: #dc2626;
+            font-size: 0.85rem;
+            margin-top: 0.5rem;
+            display: none;
+        }
+
+        .captcha-error.show {
+            display: block;
         }
 
         .confirmation-actions {
@@ -1481,20 +1517,28 @@
                 font-size: 1.1rem;
             }
 
-            .slider-button {
-                height: 50px;
-                font-size: 0.85rem;
-                border-radius: 6px;
+            .captcha-container {
+                padding: 1.25rem;
+                margin-bottom: 0.75rem;
             }
 
-            .slider-thumb {
-                width: 46px;
-                height: 46px;
-                font-size: 1.1rem;
+            .captcha-question {
+                font-size: 1rem;
+                padding: 0.75rem;
             }
 
-            .slider-button.active .slider-thumb {
-                left: calc(100% - 48px);
+            .captcha-input-group {
+                gap: 0.5rem;
+            }
+
+            .captcha-input {
+                padding: 0.65rem;
+                font-size: 0.95rem;
+            }
+
+            .captcha-verify-btn {
+                font-size: 0.9rem;
+                padding: 0.65rem;
             }
 
             .btn-payment {
@@ -1968,11 +2012,17 @@
                         </div>
                     </div>
 
-                    <div class="slider-button-container">
-                        <div class="slider-button ready" id="slider-button" onclick="handleSliderClick(event)">
-                            <div class="slider-thumb">→</div>
-                            <div class="slider-text" data-en="Slide to Confirm" data-it="Scorri per Confermare">Slide to Confirm</div>
+                    <div class="captcha-container" id="captcha-container">
+                        <div class="captcha-header">
+                            <span>🔐</span>
+                            <span data-en="Verify you are human" data-it="Verifica che sei umano">Verify you are human</span>
                         </div>
+                        <div class="captcha-question" id="captcha-question"></div>
+                        <div class="captcha-input-group">
+                            <input type="text" class="captcha-input" id="captcha-answer" placeholder="Your answer" data-en-placeholder="Your answer" data-it-placeholder="La tua risposta">
+                            <button class="captcha-verify-btn" id="captcha-verify-btn" onclick="verifyCaptcha()" data-en="Verify" data-it="Verifica">Verify</button>
+                        </div>
+                        <div class="captcha-error" id="captcha-error"></div>
                     </div>
 
                     <div class="payment-btn-group">
@@ -2418,12 +2468,13 @@
             const el1 = document.getElementById('step4-flight');
             const el2 = document.getElementById('step4-passengers');
             const el3 = document.getElementById('step4-amount');
-            const sliderBtn = document.getElementById('slider-button');
 
             if (el1) el1.textContent = flightText;
             if (el2) el2.textContent = currentPassengers;
             if (el3) el3.textContent = `${totalWithGas} ETH`;
-            if (sliderBtn) sliderBtn.classList.remove('active');
+            
+            // Initialize CAPTCHA for this step
+            initializeCaptcha();
         }
 
         function connectWalletFromPayment() {
@@ -3075,14 +3126,59 @@
             if (spaBackBtn) spaBackBtn.style.display = 'none';
         }
 
-        function handleSliderClick(event) {
-            const slider = document.getElementById('slider-button');
+        // CAPTCHA variables
+        let currentCaptcha = null;
+
+        // Initialize CAPTCHA
+        function initializeCaptcha() {
+            const num1 = Math.floor(Math.random() * 20) + 1;
+            const num2 = Math.floor(Math.random() * 20) + 1;
+            const operator = Math.random() > 0.5 ? '+' : '-';
             
-            if (!slider.classList.contains('active')) {
-                slider.classList.add('active');
+            if (operator === '+') {
+                currentCaptcha = { answer: num1 + num2, question: `${num1} + ${num2} = ?` };
             } else {
-                // Slider fully swiped - complete payment
-                completePayment();
+                currentCaptcha = { answer: num1 - num2, question: `${num1} - ${num2} = ?` };
+            }
+            
+            document.getElementById('captcha-question').textContent = currentCaptcha.question;
+            document.getElementById('captcha-answer').value = '';
+            document.getElementById('captcha-answer').classList.remove('error', 'success');
+            document.getElementById('captcha-error').classList.remove('show');
+        }
+
+        // Verify CAPTCHA answer
+        function verifyCaptcha() {
+            const userAnswer = document.getElementById('captcha-answer').value.trim();
+            const answerInput = document.getElementById('captcha-answer');
+            const errorMsg = document.getElementById('captcha-error');
+            
+            if (!userAnswer) {
+                answerInput.classList.add('error');
+                errorMsg.textContent = currentLanguage === 'en' ? 'Please enter an answer' : 'Per favore inserisci una risposta';
+                errorMsg.classList.add('show');
+                return;
+            }
+            
+            if (parseInt(userAnswer) === currentCaptcha.answer) {
+                answerInput.classList.add('success');
+                answerInput.classList.remove('error');
+                errorMsg.classList.remove('show');
+                
+                // Disable input and show success
+                setTimeout(() => {
+                    completePayment();
+                }, 500);
+            } else {
+                answerInput.classList.add('error');
+                answerInput.classList.remove('success');
+                errorMsg.textContent = currentLanguage === 'en' ? 'Incorrect answer. Try again!' : 'Risposta errata. Riprova!';
+                errorMsg.classList.add('show');
+                
+                // Refresh CAPTCHA after error
+                setTimeout(() => {
+                    initializeCaptcha();
+                }, 1500);
             }
         }
 
@@ -3166,6 +3262,16 @@
             // Attach event listeners to airport selectors
             document.getElementById('from-airport').addEventListener('change', validateAirportSelection);
             document.getElementById('to-airport').addEventListener('change', validateAirportSelection);
+
+            // Add Enter key support for CAPTCHA input
+            const captchaInput = document.getElementById('captcha-answer');
+            if (captchaInput) {
+                captchaInput.addEventListener('keypress', function(e) {
+                    if (e.key === 'Enter') {
+                        verifyCaptcha();
+                    }
+                });
+            }
 
             if (typeof window.ethereum !== 'undefined') {
                 window.ethereum.on('accountsChanged', (accounts) => {
