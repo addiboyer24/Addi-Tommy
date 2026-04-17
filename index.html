@@ -3134,6 +3134,38 @@
             const today = new Date().toISOString().split('T')[0];
             document.getElementById('departure-date').setAttribute('min', today);
 
+            // Validate airport selection to prevent same from/to airports
+            function validateAirportSelection() {
+                const fromAirport = document.getElementById('from-airport').value;
+                const toAirport = document.getElementById('to-airport');
+                const fromAirportSelect = document.getElementById('from-airport');
+
+                // Disable matching airports in the to dropdown
+                Array.from(toAirport.options).forEach(option => {
+                    if (option.value === fromAirport && fromAirport !== '') {
+                        option.disabled = true;
+                        option.style.display = 'none';
+                    } else {
+                        option.disabled = false;
+                        option.style.display = 'block';
+                    }
+                });
+
+                // Disable matching airports in the from dropdown
+                Array.from(fromAirportSelect.options).forEach(option => {
+                    if (option.value === toAirport.value && toAirport.value !== '') {
+                        option.disabled = true;
+                        option.style.display = 'none';
+                    } else {
+                        option.disabled = false;
+                        option.style.display = 'block';
+                    }
+                });
+            }
+
+            // Attach event listeners to airport selectors
+            document.getElementById('from-airport').addEventListener('change', validateAirportSelection);
+            document.getElementById('to-airport').addEventListener('change', validateAirportSelection);
 
             if (typeof window.ethereum !== 'undefined') {
                 window.ethereum.on('accountsChanged', (accounts) => {
