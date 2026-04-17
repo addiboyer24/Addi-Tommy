@@ -1675,6 +1675,7 @@
                     <select id="from-airport">
                         <option value="" data-en="Select Departure" data-it="Seleziona Partenza">Select Departure</option>
                         <option value="MXP" data-en="Milan - Malpensa (MXP)" data-it="Milano - Malpensa (MXP)">Milan - Malpensa (MXP)</option>
+                        <option value="MSO" data-en="Missoula (MSO)" data-it="Missoula (MSO)">Missoula (MSO)</option>
                     </select>
                 </div>
                 <div class="form-group">
@@ -1682,6 +1683,7 @@
                     <select id="to-airport">
                         <option value="" data-en="Select Destination" data-it="Seleziona Destinazione">Select Destination</option>
                         <option value="MSO" data-en="Missoula (MSO)" data-it="Missoula (MSO)">Missoula (MSO)</option>
+                        <option value="MXP" data-en="Milan - Malpensa (MXP)" data-it="Milano - Malpensa (MXP)">Milan - Malpensa (MXP)</option>
                     </select>
                 </div>
                 <div class="form-group">
@@ -1982,6 +1984,13 @@
         </div>
     </div>
 
+    <!-- Leaflet Map Library -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/leaflet@1.9.3/dist/leaflet.css"/>
+    <script src="https://cdn.jsdelivr.net/npm/leaflet@1.9.3/dist/leaflet.js"></script>
+
+    <!-- Font Awesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"/>
+
     <!-- WalletConnect and Web3 Libraries -->
     <script src="https://cdn.jsdelivr.net/npm/@walletconnect/client@1.8.0/dist/index.umd.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/web3@1.10.0/dist/web3.min.js"></script>
@@ -2151,6 +2160,18 @@
 
         // Routes Data - Milan to Missoula Direct
         const routes = [
+            {
+                from: { en: 'Missoula', it: 'Missoula' },
+                to: { en: 'Milan', it: 'Milano' },
+                price: 799,
+                priceUSD: 799,
+                duration: '11h 30m',
+                frequency: { en: 'Daily', it: 'Giornaliero' },
+                fromCode: 'MSO',
+                toCode: 'MXP',
+                aircraft: { en: 'Airbus A350-900', it: 'Airbus A350-900' },
+                stops: { en: 'Direct', it: 'Diretto' }
+            },
             {
                 from: { en: 'Milan', it: 'Milano' },
                 to: { en: 'Missoula', it: 'Missoula' },
@@ -2528,220 +2549,195 @@
         function initMap() {
             const mapContainer = document.getElementById('airline-map');
             
-            // Create SVG canvas for animation
-            const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
-            svg.setAttribute('viewBox', '0 0 1000 600');
-            svg.setAttribute('width', '100%');
-            svg.setAttribute('height', '600');
-            svg.setAttribute('style', 'background: linear-gradient(135deg, #e3f2fd 0%, #f3e5f5 100%); border-radius: 10px; overflow: hidden; box-shadow: 0 5px 20px rgba(0,0,0,0.1);');
+            // Airport coordinates
+            const milanLat = 45.6295, milanLng = 8.7281;
+            const missoulaLat = 46.8722, missoulaLng = -113.9940;
             
-            // Add defs for gradients and filters
-            const defs = document.createElementNS('http://www.w3.org/2000/svg', 'defs');
+            // Create map centered on route midpoint
+            const centerLat = (milanLat + missoulaLat) / 2;
+            const centerLng = (milanLng + missoulaLng) / 2;
             
-            // Glow filter for airplane
-            const filter = document.createElementNS('http://www.w3.org/2000/svg', 'filter');
-            filter.setAttribute('id', 'glow');
-            filter.setAttribute('x', '-50%');
-            filter.setAttribute('y', '-50%');
-            filter.setAttribute('width', '200%');
-            filter.setAttribute('height', '200%');
-            const feGaussianBlur = document.createElementNS('http://www.w3.org/2000/svg', 'feGaussianBlur');
-            feGaussianBlur.setAttribute('stdDeviation', '3');
-            feGaussianBlur.setAttribute('result', 'coloredBlur');
-            filter.appendChild(feGaussianBlur);
-            const feMerge = document.createElementNS('http://www.w3.org/2000/svg', 'feMerge');
-            const feMergeNode1 = document.createElementNS('http://www.w3.org/2000/svg', 'feMergeNode');
-            feMergeNode1.setAttribute('in', 'coloredBlur');
-            const feMergeNode2 = document.createElementNS('http://www.w3.org/2000/svg', 'feMergeNode');
-            feMergeNode2.setAttribute('in', 'SourceGraphic');
-            feMerge.appendChild(feMergeNode1);
-            feMerge.appendChild(feMergeNode2);
-            filter.appendChild(feMerge);
-            defs.appendChild(filter);
-            svg.appendChild(defs);
+            const map = L.map('airline-map').setView([centerLat, centerLng], 4);
             
-            // Add animated path
-            const path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
-            path.setAttribute('d', 'M 100 450 Q 500 100 900 50');
-            path.setAttribute('fill', 'none');
-            path.setAttribute('stroke', '#ff6b35');
-            path.setAttribute('stroke-width', '3');
-            path.setAttribute('stroke-dasharray', '10,5');
-            path.setAttribute('opacity', '0.6');
-            svg.appendChild(path);
+            // Add CartoDB Positron tiles
+            L.tileLayer('https://{s}.basemaps.cartocdn.com/positron/{z}/{x}/{y}{r}.png', {
+                attribution: '© OpenStreetMap contributors © CARTO',
+                maxZoom: 19,
+                subdomains: 'abcd'
+            }).addTo(map);
+
+            // Create custom departure marker (green)
+            const departureIcon = L.divIcon({
+                html: `<div style="background: linear-gradient(135deg, #10b981 0%, #059669 100%); 
+                            color: white; 
+                            border-radius: 50%; 
+                            width: 45px; 
+                            height: 45px; 
+                            display: flex; 
+                            align-items: center; 
+                            justify-content: center; 
+                            font-size: 24px; 
+                            box-shadow: 0 4px 15px rgba(16, 185, 129, 0.4);
+                            border: 3px solid white;">
+                            <i class="fas fa-location-dot"></i>
+                        </div>`,
+                iconSize: [45, 45],
+                className: 'custom-icon'
+            });
+
+            // Create custom arrival marker (blue)
+            const arrivalIcon = L.divIcon({
+                html: `<div style="background: linear-gradient(135deg, #0066cc 0%, #004499 100%); 
+                            color: white; 
+                            border-radius: 50%; 
+                            width: 45px; 
+                            height: 45px; 
+                            display: flex; 
+                            align-items: center; 
+                            justify-content: center; 
+                            font-size: 24px; 
+                            box-shadow: 0 4px 15px rgba(0, 102, 204, 0.4);
+                            border: 3px solid white;">
+                            <i class="fas fa-location-dot"></i>
+                        </div>`,
+                iconSize: [45, 45],
+                className: 'custom-icon'
+            });
+
+            // Add departure marker (Missoula)
+            const missoulaMarker = L.marker([missoulaLat, missoulaLng], { icon: departureIcon }).addTo(map);
+            missoulaMarker.bindPopup(`
+                <div style="font-family: Arial; font-size: 12px;">
+                    <h3 style="margin: 0 0 8px 0; color: #10b981;"><i class="fas fa-plane-departure"></i> Departure</h3>
+                    <strong>Missoula (MSO)</strong><br>
+                    <span style="color: #666; font-size: 11px;">United States</span><br>
+                    <hr style="margin: 8px 0;">
+                    <span style="font-size: 11px; color: #666;">46.8722°N, 113.9940°W</span>
+                </div>
+            `, { maxWidth: 280 });
+
+            // Add arrival marker (Milan)
+            const milanMarker = L.marker([milanLat, milanLng], { icon: arrivalIcon }).addTo(map);
+            milanMarker.bindPopup(`
+                <div style="font-family: Arial; font-size: 12px;">
+                    <h3 style="margin: 0 0 8px 0; color: #0066cc;"><i class="fas fa-plane-arrival"></i> Arrival</h3>
+                    <strong>Milan - Malpensa (MXP)</strong><br>
+                    <span style="color: #666; font-size: 11px;">Italy</span><br>
+                    <hr style="margin: 8px 0;">
+                    <span style="font-size: 11px; color: #666;">45.6295°N, 8.7281°E</span>
+                </div>
+            `, { maxWidth: 280 });
+
+            // Add flight route line
+            const route = L.polyline(
+                [[missoulaLat, missoulaLng], [milanLat, milanLng]],
+                {
+                    color: '#ff6b35',
+                    weight: 3,
+                    opacity: 0.7,
+                    dashArray: '10, 5',
+                    lineCap: 'round',
+                    lineJoin: 'round'
+                }
+            ).addTo(map);
+
+            // Create animated airplane marker
+            const planeIcon = L.divIcon({
+                html: `<div style="color: #ff6b35; font-size: 32px; text-shadow: 0 2px 4px rgba(0,0,0,0.2); filter: drop-shadow(0 0 3px rgba(255, 107, 53, 0.6));"><i class="fas fa-plane"></i></div>`,
+                iconSize: [35, 35],
+                className: 'plane-marker'
+            });
+
+            const planeMarker = L.marker([missoulaLat, missoulaLng], { icon: planeIcon }).addTo(map);
             
-            // Missoula location marker
-            const missoulaCircle = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
-            missoulaCircle.setAttribute('cx', '100');
-            missoulaCircle.setAttribute('cy', '450');
-            missoulaCircle.setAttribute('r', '25');
-            missoulaCircle.setAttribute('fill', 'url(#missoulaGrad)');
-            missoulaCircle.setAttribute('stroke', 'white');
-            missoulaCircle.setAttribute('stroke-width', '3');
-            missoulaCircle.setAttribute('filter', 'url(#glow)');
-            
-            const missoulaGrad = document.createElementNS('http://www.w3.org/2000/svg', 'radialGradient');
-            missoulaGrad.setAttribute('id', 'missoulaGrad');
-            const stop1 = document.createElementNS('http://www.w3.org/2000/svg', 'stop');
-            stop1.setAttribute('offset', '0%');
-            stop1.setAttribute('stop-color', '#10b981');
-            const stop2 = document.createElementNS('http://www.w3.org/2000/svg', 'stop');
-            stop2.setAttribute('offset', '100%');
-            stop2.setAttribute('stop-color', '#059669');
-            missoulaGrad.appendChild(stop1);
-            missoulaGrad.appendChild(stop2);
-            defs.appendChild(missoulaGrad);
-            svg.appendChild(missoulaCircle);
-            
-            // Missoula text
-            const missoulaText = document.createElementNS('http://www.w3.org/2000/svg', 'text');
-            missoulaText.setAttribute('x', '100');
-            missoulaText.setAttribute('y', '520');
-            missoulaText.setAttribute('text-anchor', 'middle');
-            missoulaText.setAttribute('font-size', '18');
-            missoulaText.setAttribute('font-weight', 'bold');
-            missoulaText.setAttribute('fill', '#0066cc');
-            missoulaText.textContent = 'Missoula (MSO)';
-            svg.appendChild(missoulaText);
-            
-            // Milan location marker
-            const milanCircle = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
-            milanCircle.setAttribute('cx', '900');
-            milanCircle.setAttribute('cy', '50');
-            milanCircle.setAttribute('r', '25');
-            milanCircle.setAttribute('fill', 'url(#milanGrad)');
-            milanCircle.setAttribute('stroke', 'white');
-            milanCircle.setAttribute('stroke-width', '3');
-            milanCircle.setAttribute('filter', 'url(#glow)');
-            
-            const milanGrad = document.createElementNS('http://www.w3.org/2000/svg', 'radialGradient');
-            milanGrad.setAttribute('id', 'milanGrad');
-            const stop3 = document.createElementNS('http://www.w3.org/2000/svg', 'stop');
-            stop3.setAttribute('offset', '0%');
-            stop3.setAttribute('stop-color', '#0066cc');
-            const stop4 = document.createElementNS('http://www.w3.org/2000/svg', 'stop');
-            stop4.setAttribute('offset', '100%');
-            stop4.setAttribute('stop-color', '#004499');
-            milanGrad.appendChild(stop3);
-            milanGrad.appendChild(stop4);
-            defs.appendChild(milanGrad);
-            svg.appendChild(milanCircle);
-            
-            // Milan text
-            const milanText = document.createElementNS('http://www.w3.org/2000/svg', 'text');
-            milanText.setAttribute('x', '900');
-            milanText.setAttribute('y', '20');
-            milanText.setAttribute('text-anchor', 'middle');
-            milanText.setAttribute('font-size', '18');
-            milanText.setAttribute('font-weight', 'bold');
-            milanText.setAttribute('fill', '#0066cc');
-            milanText.textContent = 'Milan (MXP)';
-            svg.appendChild(milanText);
-            
-            // Animated airplane
-            const airplane = document.createElementNS('http://www.w3.org/2000/svg', 'g');
-            airplane.setAttribute('id', 'airplane');
-            
-            // Airplane icon (simple plane shape)
-            const planeBody = document.createElementNS('http://www.w3.org/2000/svg', 'ellipse');
-            planeBody.setAttribute('cx', '0');
-            planeBody.setAttribute('cy', '0');
-            planeBody.setAttribute('rx', '15');
-            planeBody.setAttribute('ry', '8');
-            planeBody.setAttribute('fill', '#ff6b35');
-            airplane.appendChild(planeBody);
-            
-            // Airplane wings
-            const wings = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
-            wings.setAttribute('x', '-25');
-            wings.setAttribute('y', '-3');
-            wings.setAttribute('width', '50');
-            wings.setAttribute('height', '6');
-            wings.setAttribute('fill', '#ff6b35');
-            wings.setAttribute('opacity', '0.8');
-            airplane.appendChild(wings);
-            
-            // Airplane cockpit
-            const cockpit = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
-            cockpit.setAttribute('cx', '0');
-            cockpit.setAttribute('cy', '-5');
-            cockpit.setAttribute('r', '4');
-            cockpit.setAttribute('fill', '#333');
-            airplane.appendChild(cockpit);
-            
-            // Add glow to airplane
-            airplane.setAttribute('filter', 'url(#glow)');
-            
-            svg.appendChild(airplane);
-            
-            // Add trail for airplane
-            const trail = document.createElementNS('http://www.w3.org/2000/svg', 'polyline');
-            trail.setAttribute('id', 'trail');
-            trail.setAttribute('fill', 'none');
-            trail.setAttribute('stroke', '#fbbf24');
-            trail.setAttribute('stroke-width', '2');
-            trail.setAttribute('stroke-dasharray', '5,5');
-            trail.setAttribute('opacity', '0.5');
-            svg.appendChild(trail);
-            
-            // Add animation using anime.js or JavaScript
-            let progress = 0;
-            const animationDuration = 8000; // 8 seconds
-            let trailPoints = [];
-            
-            function animateFlight() {
+            planeMarker.bindPopup(`
+                <div style="font-family: Arial; font-size: 12px;">
+                    <h3 style="margin: 0 0 8px 0; color: #ff6b35;"><i class="fas fa-plane"></i> Flight AB&T-001</h3>
+                    <strong>Missoula → Milan</strong><br>
+                    <span style="color: #666; font-size: 11px;">Direct Flight • 11h 30m</span><br>
+                    <hr style="margin: 8px 0;">
+                    <strong style="color: #10b981;">Airbus A350-900</strong><br>
+                    <span style="color: #666; font-size: 11px;">Daily Service • $799</span>
+                </div>
+            `, { maxWidth: 280 });
+
+            // Animate airplane along the route
+            function animatePlane() {
+                const animationDuration = 8000; // 8 seconds per leg
                 const startTime = Date.now();
-                
-                function update() {
+                let direction = 'mso-mxp'; // Start with Missoula to Milan
+
+                function updatePosition() {
                     const elapsed = Date.now() - startTime;
-                    progress = Math.min(elapsed / animationDuration, 1);
+                    const progress = Math.min(elapsed / animationDuration, 1);
+
+                    // Smooth easing function (ease-in-out)
+                    const easeProgress = progress < 0.5 
+                        ? 2 * progress * progress 
+                        : -1 + (4 - 2 * progress) * progress;
+
+                    // Determine current direction and interpolate accordingly
+                    let startLat, startLng, endLat, endLng, flightNumber, cityFrom, cityTo;
                     
-                    // Quadratic Bezier curve: B(t) = (1-t)^2 * P0 + 2(1-t)t * P1 + t^2 * P2
-                    const t = progress;
-                    const x = Math.pow(1-t, 2) * 100 + 2 * (1-t) * t * 500 + Math.pow(t, 2) * 900;
-                    const y = Math.pow(1-t, 2) * 450 + 2 * (1-t) * t * 100 + Math.pow(t, 2) * 50;
-                    
-                    airplane.setAttribute('transform', 'translate(' + x + ',' + y + ') rotate(' + (45 + t * 0) + ')');
-                    
-                    // Add to trail
-                    trailPoints.push(x + ',' + y);
-                    if (trailPoints.length > 50) {
-                        trailPoints.shift();
-                    }
-                    trail.setAttribute('points', trailPoints.join(' '));
-                    
-                    if (progress < 1) {
-                        requestAnimationFrame(update);
+                    if (direction === 'mso-mxp') {
+                        startLat = missoulaLat;
+                        startLng = missoulaLng;
+                        endLat = milanLat;
+                        endLng = milanLng;
+                        flightNumber = 'AB&T-001';
+                        cityFrom = 'Missoula';
+                        cityTo = 'Milan';
                     } else {
-                        // Reset animation
+                        startLat = milanLat;
+                        startLng = milanLng;
+                        endLat = missoulaLat;
+                        endLng = missoulaLng;
+                        flightNumber = 'AB&T-002';
+                        cityFrom = 'Milan';
+                        cityTo = 'Missoula';
+                    }
+
+                    // Interpolate position along the route
+                    const currentLat = startLat + (endLat - startLat) * easeProgress;
+                    const currentLng = startLng + (endLng - startLng) * easeProgress;
+
+                    planeMarker.setLatLng([currentLat, currentLng]);
+                    
+                    // Update popup with current flight info
+                    planeMarker.setPopupContent(`
+                        <div style="font-family: Arial; font-size: 12px;">
+                            <h3 style="margin: 0 0 8px 0; color: #ff6b35;"><i class="fas fa-plane"></i> Flight ${flightNumber}</h3>
+                            <strong>${cityFrom} → ${cityTo}</strong><br>
+                            <span style="color: #666; font-size: 11px;">Direct Flight • 11h 30m</span><br>
+                            <hr style="margin: 8px 0;">
+                            <strong style="color: #10b981;">Airbus A350-900</strong><br>
+                            <span style="color: #666; font-size: 11px;">Daily Service • $799</span>
+                        </div>
+                    `);
+
+                    if (progress < 1) {
+                        requestAnimationFrame(updatePosition);
+                    } else {
+                        // Switch direction and repeat after 2 second delay
                         setTimeout(() => {
-                            progress = 0;
-                            trailPoints = [];
-                            trail.setAttribute('points', '');
-                            animateFlight();
+                            direction = direction === 'mso-mxp' ? 'mxp-mso' : 'mso-mxp';
+                            animatePlane();
                         }, 2000);
                     }
                 }
-                
-                update();
+
+                updatePosition();
             }
-            
-            // Start animation when visible
-            animateFlight();
-            
-            // Add info text at bottom
-            const infoText = document.createElementNS('http://www.w3.org/2000/svg', 'text');
-            infoText.setAttribute('x', '500');
-            infoText.setAttribute('y', '570');
-            infoText.setAttribute('text-anchor', 'middle');
-            infoText.setAttribute('font-size', '14');
-            infoText.setAttribute('fill', '#0066cc');
-            infoText.setAttribute('font-weight', 'bold');
-            infoText.textContent = 'AB&T Airlines - Missoula to Milan Direct Flight (11h 30m)';
-            svg.appendChild(infoText);
-            
-            mapContainer.innerHTML = '';
-            mapContainer.appendChild(svg);
+
+            // Start animation
+            animatePlane();
+
+            // Fit map bounds to show both airports
+            const bounds = L.latLngBounds([[milanLat, milanLng], [missoulaLat, missoulaLng]]);
+            map.fitBounds(bounds, { padding: [100, 100] });
+
+            // Store map reference
+            window.airlineMap = map;
         }
 
         // Populate routes grid
