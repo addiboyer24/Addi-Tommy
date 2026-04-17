@@ -2158,8 +2158,9 @@
             }
         }
 
-        // Routes Data - Milan to Missoula Direct
+        // Routes Data - Milan to Missoula Direct with Rotating Schedule
         const routes = [
+            // Missoula → Milan (Morning)
             {
                 from: { en: 'Missoula', it: 'Missoula' },
                 to: { en: 'Milan', it: 'Milano' },
@@ -2170,8 +2171,41 @@
                 fromCode: 'MSO',
                 toCode: 'MXP',
                 aircraft: { en: 'Airbus A350-900', it: 'Airbus A350-900' },
-                stops: { en: 'Direct', it: 'Diretto' }
+                stops: { en: 'Direct', it: 'Diretto' },
+                departureTime: '06:00',
+                arrivalTime: '20:30'
             },
+            // Missoula → Milan (Afternoon)
+            {
+                from: { en: 'Missoula', it: 'Missoula' },
+                to: { en: 'Milan', it: 'Milano' },
+                price: 799,
+                priceUSD: 799,
+                duration: '11h 30m',
+                frequency: { en: 'Daily', it: 'Giornaliero' },
+                fromCode: 'MSO',
+                toCode: 'MXP',
+                aircraft: { en: 'Airbus A350-900', it: 'Airbus A350-900' },
+                stops: { en: 'Direct', it: 'Diretto' },
+                departureTime: '14:00',
+                arrivalTime: '04:30 (+1)'
+            },
+            // Missoula → Milan (Evening)
+            {
+                from: { en: 'Missoula', it: 'Missoula' },
+                to: { en: 'Milan', it: 'Milano' },
+                price: 799,
+                priceUSD: 799,
+                duration: '11h 30m',
+                frequency: { en: 'Daily', it: 'Giornaliero' },
+                fromCode: 'MSO',
+                toCode: 'MXP',
+                aircraft: { en: 'Airbus A350-900', it: 'Airbus A350-900' },
+                stops: { en: 'Direct', it: 'Diretto' },
+                departureTime: '22:00',
+                arrivalTime: '12:30 (+1)'
+            },
+            // Milan → Missoula (Morning)
             {
                 from: { en: 'Milan', it: 'Milano' },
                 to: { en: 'Missoula', it: 'Missoula' },
@@ -2182,7 +2216,39 @@
                 fromCode: 'MXP',
                 toCode: 'MSO',
                 aircraft: { en: 'Airbus A350-900', it: 'Airbus A350-900' },
-                stops: { en: 'Direct', it: 'Diretto' }
+                stops: { en: 'Direct', it: 'Diretto' },
+                departureTime: '07:00',
+                arrivalTime: '11:30'
+            },
+            // Milan → Missoula (Afternoon)
+            {
+                from: { en: 'Milan', it: 'Milano' },
+                to: { en: 'Missoula', it: 'Missoula' },
+                price: 799,
+                priceUSD: 799,
+                duration: '11h 30m',
+                frequency: { en: 'Daily', it: 'Giornaliero' },
+                fromCode: 'MXP',
+                toCode: 'MSO',
+                aircraft: { en: 'Airbus A350-900', it: 'Airbus A350-900' },
+                stops: { en: 'Direct', it: 'Diretto' },
+                departureTime: '13:30',
+                arrivalTime: '18:00'
+            },
+            // Milan → Missoula (Evening)
+            {
+                from: { en: 'Milan', it: 'Milano' },
+                to: { en: 'Missoula', it: 'Missoula' },
+                price: 799,
+                priceUSD: 799,
+                duration: '11h 30m',
+                frequency: { en: 'Daily', it: 'Giornaliero' },
+                fromCode: 'MXP',
+                toCode: 'MSO',
+                aircraft: { en: 'Airbus A350-900', it: 'Airbus A350-900' },
+                stops: { en: 'Direct', it: 'Diretto' },
+                departureTime: '21:00',
+                arrivalTime: '01:30 (+1)'
             }
         ];
 
@@ -2745,6 +2811,7 @@
             const routesGrid = document.getElementById('routes-grid');
             routesGrid.innerHTML = routes.map(route => {
                 const selectText = currentLanguage === 'en' ? 'Book Now' : 'Prenota Ora';
+                const timeDisplay = route.departureTime ? `🕐 ${route.departureTime} → ${route.arrivalTime}` : '';
                 return `
                     <div class="route-card">
                         <div class="route-header">
@@ -2758,6 +2825,7 @@
                             <div style="color: var(--text-light); font-size: 0.9rem; margin: 0.5rem 0;">
                                 <span>⏱️ ${route.duration}</span> • <span>📅 ${route.frequency[currentLanguage]}</span>
                             </div>
+                            ${timeDisplay ? `<div style="color: var(--primary-color); font-size: 0.95rem; font-weight: 500; margin: 0.4rem 0;">${timeDisplay}</div>` : ''}
                             <div class="route-price">USD $${route.price}</div>
                             <div class="route-price-crypto">💰 ~${(route.price * 0.00003).toFixed(6)} ETH</div>
                             <button class="route-btn" onclick="selectRoute('${route.fromCode}', '${route.toCode}')">${selectText}</button>
@@ -2933,7 +3001,6 @@
                 document.getElementById('from-airport').value = '';
                 document.getElementById('to-airport').value = '';
                 document.getElementById('departure-date').value = '';
-                document.getElementById('return-date').value = '';
                 document.getElementById('passengers').value = '1';
                 
             } catch (error) {
@@ -3066,7 +3133,7 @@
             
             const today = new Date().toISOString().split('T')[0];
             document.getElementById('departure-date').setAttribute('min', today);
-            document.getElementById('return-date').setAttribute('min', today);
+
 
             if (typeof window.ethereum !== 'undefined') {
                 window.ethereum.on('accountsChanged', (accounts) => {
