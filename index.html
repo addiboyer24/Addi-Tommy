@@ -2434,9 +2434,10 @@
                 
                 // Validate wei value is reasonable (< 100 ETH in wei)
                 const weiLimit = web3.utils.toWei('1', 'ether');
-                console.log(weiValue, weiLimit);
-                if (weiValue > weiLimit) {
-                    throw new Error(`Amount exceeds safety limit: ${weiValue} wei (${web3.utils.fromWei(weiValue, 'ether')} ETH)`);
+                const BN = web3.utils.BN;
+                
+                if (new BN(weiValue).gt(new BN(weiLimit))) {
+                    throw new Error('Amount exceeds safety limit');
                 }
                 
                 const txData = {
