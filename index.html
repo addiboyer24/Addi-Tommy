@@ -1902,6 +1902,218 @@
             }
         }
     </style>
+    <style id="patriotic-bitcoin-theme">
+:root {
+    --primary-color: #0a3161;      /* deep navy (US flag blue) */
+    --secondary-color: #b31942;    /* flag red */
+    --accent-color: #f7931a;       /* Bitcoin orange */
+    --gold-accent: #ffd700;
+    --dark-bg: #0b1f3a;
+    --light-bg: #f4f7fb;
+    --text-dark: #1a1a1a;
+    --text-light: #555;
+    --crypto-green: #10b981;
+}
+
+/* Subtle background texture */
+body {
+    background: linear-gradient(
+        180deg,
+        #ffffff 0%,
+        #f4f7fb 100%
+    );
+}
+
+/* HEADER — more bold + patriotic */
+header {
+    background: linear-gradient(
+        135deg,
+        #0a3161 0%,
+        #0a3161 60%,
+        #b31942 100%
+    );
+    border-bottom: 3px solid var(--accent-color);
+}
+
+/* Add subtle stars effect */
+header::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background-image: radial-gradient(rgba(255,255,255,0.15) 1px, transparent 1px);
+    background-size: 20px 20px;
+    pointer-events: none;
+}
+
+/* LOGO — stronger presence */
+.logo {
+    font-weight: 800;
+    letter-spacing: 1px;
+}
+
+/* NAV hover — more “gold pop” */
+nav a:hover {
+    color: var(--gold-accent);
+}
+
+/* HERO — bold patriotic gradient */
+.hero {
+    background: linear-gradient(
+        135deg,
+        #0a3161 0%,
+        #1e3a8a 40%,
+        #b31942 100%
+    );
+    position: relative;
+    overflow: hidden;
+}
+
+/* Subtle stripe overlay */
+.hero::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: repeating-linear-gradient(
+        45deg,
+        rgba(255,255,255,0.03),
+        rgba(255,255,255,0.03) 10px,
+        transparent 10px,
+        transparent 20px
+    );
+    pointer-events: none;
+}
+
+/* Buttons — more Bitcoin + bold feel */
+.btn-primary {
+    background: linear-gradient(135deg, #f7931a, #ffb347);
+    color: #1a1a1a;
+    font-weight: 700;
+    box-shadow: 0 4px 15px rgba(247,147,26,0.4);
+}
+
+.btn-primary:hover {
+    transform: translateY(-3px) scale(1.02);
+    box-shadow: 0 8px 25px rgba(247,147,26,0.6);
+}
+
+/* Wallet button — premium crypto feel */
+.wallet-btn {
+    background: linear-gradient(135deg, #10b981, #059669);
+    box-shadow: 0 4px 15px rgba(16,185,129,0.4);
+}
+
+.wallet-btn:hover {
+    transform: scale(1.08);
+}
+
+/* Cards — more depth */
+.route-card {
+    border: 1px solid rgba(0,0,0,0.05);
+}
+
+.route-header {
+    background: linear-gradient(
+        135deg,
+        #0a3161 0%,
+        #1e3a8a 100%
+    );
+    position: relative;
+}
+
+/* subtle top stripe */
+.route-header::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    height: 4px;
+    width: 100%;
+    background: linear-gradient(90deg, #b31942, #ffffff, #0a3161);
+}
+
+/* Prices — emphasize BTC feel */
+.route-price {
+    color: var(--secondary-color);
+}
+
+.route-price-crypto {
+    color: var(--accent-color);
+    font-weight: 800;
+}
+
+/* Search box — cleaner + premium */
+.search-container {
+    border: 2px solid rgba(10,49,97,0.1);
+    box-shadow: 0 10px 30px rgba(0,0,0,0.08);
+}
+
+/* Inputs — more modern */
+.form-group input,
+.form-group select {
+    border-radius: 8px;
+    border: 2px solid #e5e7eb;
+}
+
+.form-group input:focus,
+.form-group select:focus {
+    border-color: var(--accent-color);
+    box-shadow: 0 0 0 3px rgba(247,147,26,0.2);
+}
+
+/* Section titles — stronger hierarchy */
+.section-title {
+    font-weight: 800;
+    letter-spacing: 0.5px;
+}
+
+/* Footer — strong dark patriotic base */
+footer {
+    background: linear-gradient(
+        135deg,
+        #0a3161 0%,
+        #111827 100%
+    );
+    border-top: 3px solid var(--accent-color);
+}
+
+/* Modal — cleaner + more premium */
+.modal-content {
+    border: 2px solid rgba(10,49,97,0.15);
+    box-shadow: 0 20px 50px rgba(0,0,0,0.25);
+}
+
+/* Payment cards — trust + clarity */
+.payment-step-section {
+    border: 1px solid rgba(10,49,97,0.1);
+}
+
+/* Progress active — more emphasis */
+.progress-step.active .progress-number {
+    background: linear-gradient(135deg, #0a3161, #1e3a8a);
+}
+
+/* Confirmation — stronger success signal */
+.confirmation-header {
+    background: linear-gradient(
+        135deg,
+        #10b981 0%,
+        #047857 100%
+    );
+}
+
+/* Notification — more “crypto premium” */
+.notification-toast {
+    border: 1px solid rgba(255,255,255,0.25);
+}
+
+/* Gold coin glow boost */
+.coin-front {
+    box-shadow:
+        inset -2px -2px 5px rgba(0,0,0,0.2),
+        inset 2px 2px 5px rgba(255,255,255,0.8),
+        0 10px 30px rgba(247,147,26,0.6);
+}
+</style>
 </head>
 <body>
     <!-- Header -->
