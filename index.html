@@ -2428,9 +2428,10 @@
                 // Convert gasPrice to hex string for MetaMask compatibility
                 const gasPrice = web3.utils.toHex(gasPriceRaw);
                 
-                // Always pass ethAmount as a string, and avoid .toFixed() for toWei
-                const weiValue = web3.utils.toWei(String(ethAmount), 'ether');
-
+                // Convert ETH to wei
+                const weiValue = ethAmount.toString();
+                console.log('📤 Gas Price (wei):', gasPrice);
+                
                 const txData = {
                     from: walletAddress,
                     to: toAddress,
