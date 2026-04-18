@@ -2769,8 +2769,8 @@ footer {
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"/>
 
     <!-- WalletConnect and Web3 Libraries -->
-<script src="https://cdn.jsdelivr.net/npm/@walletconnect/web3-provider@1.8.0/dist/umd/index.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/web3@1.10.0/dist/web3.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@walletconnect/client@1.8.0/dist/index.umd.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/web3@1.10.0/dist/web3.min.js"></script>
 
     <script>
         // Wallet State with WalletConnect
@@ -2805,99 +2805,79 @@ footer {
             return false;
         }
 
-        let walletConnected = false;
-let walletAddress = '';
-let web3 = null;
-let connector = null;
+        // Connect Wallet using MetaMask or WalletConnect
+        async function connectWallet() {
+            try {
+                console.log('Starting wallet connection...');
+                showPaymentLoader();
 
-async function connectWallet() {
-    try {
-        console.log('Starting wallet connection...');
-        showPaymentLoader();
+                let provider;
 
-        let provider = null;
+                // First try MetaMask
+                if (typeof window.ethereum !== 'undefined') {
+                    console.log('MetaMask detected, using window.ethereum');
+                    provider = window.ethereum;
+                } else {
+                    // Fallback: WalletConnect
+                    console.log('MetaMask not found, attempting WalletConnect...');
+                    const WalletConnectProvider = window.WalletConnectProvider?.default || window.WalletConnectProvider;
+                    
+                    if (!WalletConnectProvider) {
+                        throw new Error('No wallet provider available');
+                    }
 
-        // 1. Prefer injected wallet (MetaMask / Brave / Coinbase Wallet extension)
-        if (window.ethereum) {
-            console.log('Injected wallet detected, using window.ethereum');
-            provider = window.ethereum;
+                    provider = new WalletConnectProvider({
+                        infuraId: '8043bb2cf316cb6b519b6724a4ce1d86' // Public Infura ID
+                    });
+                }
 
-            const accounts = await provider.request({
-                method: 'eth_requestAccounts'
-            });
+                // Request accounts
+                const accounts = await provider.request({ 
+                    method: 'eth_requestAccounts' 
+                });
 
-            if (!accounts || accounts.length === 0) {
-                throw new Error('No accounts returned');
+                if (!accounts || accounts.length === 0) {
+                    throw new Error('No accounts returned');
+                }
+
+                walletAddress = accounts[0];
+                walletConnected = true;
+                
+                // Initialize Web3 with the provider
+                if (!web3) {
+                    web3 = new Web3(provider);
+                }
+
+                console.log('Wallet connected successfully!');
+                console.log('Address:', walletAddress);
+
+                updateWalletDisplay();
+                updatePaymentWalletSection();
+
+                hidePaymentLoader();
+
+                const msg = currentLanguage === 'en' 
+                    ? walletAddress.substring(0, 6) + '...' + walletAddress.substring(38)
+                    : walletAddress.substring(0, 6) + '...' + walletAddress.substring(38);
+                showNotification(msg, 'success', currentLanguage === 'en' ? 'Wallet Connected' : 'Portafoglio Connesso');
+
+                // Setup account change listener
+                if (provider.on) {
+                    provider.on('accountsChanged', handleAccountsChanged);
+                    provider.on('chainChanged', handleChainChanged);
+                    provider.on('disconnect', handleDisconnect);
+                }
+
+            } catch (error) {
+                hidePaymentLoader();
+                console.error('Wallet connection failed:', error);
+                
+                const msg = currentLanguage === 'en' 
+                    ? 'Connection failed: ' + error.message
+                    : 'Connessione fallita: ' + error.message;
+                showNotification(msg, 'error', currentLanguage === 'en' ? 'Connection Failed' : 'Connessione Fallita');
             }
-
-            walletAddress = accounts[0];
-        } else {
-            // 2. WalletConnect fallback
-            console.log('No injected wallet found, attempting WalletConnect...');
-
-            const WalletConnectProvider =
-                window.WalletConnectProvider?.default || window.WalletConnectProvider;
-
-            if (!WalletConnectProvider) {
-                throw new Error('WalletConnect library failed to load');
-            }
-
-            connector = new WalletConnectProvider({
-                infuraId: '8043bb2cf316cb6b519b6724a4ce1d86'
-            });
-
-            await connector.enable();
-
-            provider = connector;
-            const accounts = connector.accounts;
-
-            if (!accounts || accounts.length === 0) {
-                throw new Error('No accounts returned from WalletConnect');
-            }
-
-            walletAddress = accounts[0];
         }
-
-        web3 = new Web3(provider);
-        walletConnected = true;
-
-        console.log('Wallet connected successfully!');
-        console.log('Address:', walletAddress);
-
-        updateWalletDisplay();
-        updatePaymentWalletSection();
-
-        if (provider.on) {
-            provider.on('accountsChanged', handleAccountsChanged);
-            provider.on('chainChanged', handleChainChanged);
-            provider.on('disconnect', handleDisconnect);
-        }
-
-        hidePaymentLoader();
-
-        const shortAddress =
-            walletAddress.substring(0, 6) + '...' + walletAddress.substring(walletAddress.length - 4);
-
-        showNotification(
-            shortAddress,
-            'success',
-            currentLanguage === 'en' ? 'Wallet Connected' : 'Portafoglio Connesso'
-        );
-    } catch (error) {
-        hidePaymentLoader();
-        console.error('Wallet connection failed:', error);
-
-        const msg = currentLanguage === 'en'
-            ? 'Connection failed: ' + error.message
-            : 'Connessione fallita: ' + error.message;
-
-        showNotification(
-            msg,
-            'error',
-            currentLanguage === 'en' ? 'Connection Failed' : 'Connessione Fallita'
-        );
-    }
-}
 
         // Handle account changes
         function handleAccountsChanged(accounts) {
