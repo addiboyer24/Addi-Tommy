@@ -501,14 +501,42 @@
             background-color: transparent;
         }
 
-        .modal-content {
-            background-color: white;
-            margin: 5% auto;
-            padding: 2rem;
-            border-radius: 10px;
-            max-width: 500px;
-            box-shadow: 0 5px 20px rgba(0,0,0,0.3);
-        }
+        .modal {
+    position: fixed;
+    inset: 0;
+    z-index: 1000;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    background-color: rgba(0, 0, 0, 0.5);
+
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.2s ease;
+}
+
+.modal.open {
+    opacity: 1;
+    visibility: visible;
+}
+
+.modal-content {
+    background: white;
+    padding: 2rem;
+    border-radius: 12px;
+
+    width: 90%;
+    max-width: 500px;
+
+    transform: translateY(20px);
+    transition: transform 0.2s ease;
+}
+
+.modal.open .modal-content {
+    transform: translateY(0);
+}
 
         .close {
             color: #aaa;
